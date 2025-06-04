@@ -21,6 +21,6 @@ class Alat extends Model
 
     public function peminjamans()
     {
-        return $this->belongsToMany(Peminjaman::class, 'alat_peminjaman')->withPivot('jumlah_pinjam')->withTimestamps();
+        return $this->belongsToMany(Peminjaman::class, 'alat_peminjaman')->withPivot('jumlah_pinjam', 'kondisi_peminjaman')->withTimestamps();
     }
 }
