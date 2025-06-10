@@ -9,7 +9,7 @@ class Pengembalian extends Model
 {
     use HasFactory;
 
-    protected $table = 'pengembalians'; // sesuaikan kalau nama tabel lain
+    protected $table = 'pengembalians';
 
     protected $fillable = [
         'peminjaman_id',
@@ -21,4 +21,10 @@ class Pengembalian extends Model
     {
         return $this->belongsTo(Peminjaman::class, 'peminjaman_id');
     }
+    public function alatPengembalians()
+{
+    return $this->belongsToMany(\App\Models\Alat::class, 'alat_pengembalian')
+        ->withPivot('kondisi_pengembalian');
+}
+
 }

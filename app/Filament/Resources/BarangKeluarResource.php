@@ -19,13 +19,15 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\ExportAction;
 use Carbon\Carbon;
 use Filament\Tables\Actions\Modal\Actions\Action;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 class BarangKeluarResource extends Resource
 {
     protected static ?string $model = BarangKeluar::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-circle';
-    protected static ?string $navigationGroup = 'Inventaris';
+    protected static ?string $navigationGroup = 'Inventaris Barang';
     protected static ?string $label = 'Barang Keluar';
 
     public static function form(Form $form): Form
@@ -56,10 +58,21 @@ class BarangKeluarResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('barang.nama_barang_asli')->label('Nama Barang'),
-                TextColumn::make('jumlah_keluar')->label('Jumlah Keluar'),
-                TextColumn::make('tanggal_keluar')->date('d M Y'),
-                TextColumn::make('tujuan')->limit(30),
+                TextColumn::make('barang.nama_barang_asli')
+                ->label('Nama Barang')
+                ->searchable(),
+                TextColumn::make('jumlah_keluar')
+                ->label('Jumlah Keluar')
+                ->numeric()
+                ->sortable(),
+                TextColumn::make('tanggal_keluar')
+                ->date('d M Y')
+                ->label('Tanggal Keluar')
+                ->sortable()
+                ->searchable(),
+                TextColumn::make('tujuan')->limit(30)
+                ->searchable()
+                ->label('Tujuan Pengeluaran'),
             ])
             ->filters([
                 Filter::make('tanggal_keluar_range')
@@ -76,19 +89,19 @@ class BarangKeluarResource extends Resource
 
 
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ])
             ->headerActions([
                 ExportAction::make('export_excel')
-    ->label('Export Excel')
-    ->icon('heroicon-o-arrow-down-tray')
-    ->form([
-        Forms\Components\DatePicker::make('bulan')
+            ->label('Export Excel')
+            ->icon('heroicon-o-arrow-down-tray')
+            ->form([
+        DatePicker::make('bulan')
             ->label('Pilih Bulan')
-            ->displayFormat('F Y') // Menampilkan seperti "Juni 2025"
+            ->displayFormat('F Y')
             ->native(false)
             ->closeOnDateSelection(true)
             ->extraAttributes([
@@ -105,7 +118,7 @@ class BarangKeluarResource extends Resource
 
 
 
-        Forms\Components\Select::make('filter_penggunaan')
+        Select::make('filter_penggunaan')
             ->label('Tampilkan Barang')
             ->options([
                 'semua' => 'Tampilkan Semua Barang',
@@ -118,7 +131,7 @@ class BarangKeluarResource extends Resource
         $queryString = http_build_query([
             'bulan' => Carbon::parse($data['bulan'])->format('Y-m'),
 
-            'filter_penggunaan' => $data['filter_penggunaan'], // tambahkan ini
+            'filter_penggunaan' => $data['filter_penggunaan'],
         ]);
 
         return redirect()->away(route('export-barang') . '?' . $queryString);

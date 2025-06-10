@@ -78,7 +78,7 @@
 
     {{-- ISI SURAT --}}
     <p>Disampaikan dengan hormat, kepada pengelola barang milik sekolah bahwa saya:</p>
-    <p>Nama: <span class="underline">{{ $peminjaman->nama_peminjam }}</span></p>
+    <p>Nama: <span class="underline">{{ $peminjaman->user->name ?? '-' }}</span></p>
     <p>NIS: <span class="underline">{{ $peminjaman->nis_peminjam }}</span></p>
     <p>Kelas: <span class="underline">{{ $peminjaman->kelas_peminjam }}</span></p>
     <p>Mohon pinjam barang/peralatan seperti tertulis di bawah ini untuk keperluan <span

@@ -50,7 +50,8 @@ class User extends Authenticatable
 
     }
     public function peminjamans()
-    {
-        return $this->hasMany(Peminjaman::class, 'nama_peminjam', 'name');
-    }
+{
+    return $this->hasMany(Peminjaman::class, 'user_id');
+}
+
 }

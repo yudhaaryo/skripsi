@@ -10,17 +10,40 @@ use Filament\Actions\Exports\Models\Export;
 class PengembalianExporter extends Exporter
 {
     protected static ?string $model = Pengembalian::class;
+    public static function resolveRecord($record): \Illuminate\Database\Eloquent\Model
+{
+    return $record->load(['peminjaman', 'alatPengembalians']);
+}
+
 
     public static function getColumns(): array
     {
         return [
             ExportColumn::make('id')
                 ->label('ID'),
-            ExportColumn::make('peminjaman.nama_peminjam'),
-            ExportColumn::make('peminjaman.tanggal_pinjam'),
-            ExportColumn::make('tanggal_pengembalian'),
-            ExportColumn::make('kondisi_pengembalian'),
 
+            ExportColumn::make('peminjaman.nama_peminjam')
+                ->label('Nama Peminjam'),
+
+                ExportColumn::make('nama_alat')
+                ->label('Nama Alat')
+                ->formatStateUsing(function ($record) {
+                    return $record->alatPengembalians->pluck('nama_alat')->implode(', ');
+                }),
+
+            ExportColumn::make('peminjaman.tanggal_pinjam')
+                ->label('Tanggal Peminjaman'),
+
+            ExportColumn::make('tanggal_pengembalian')
+                ->label('Tanggal Pengembalian'),
+
+            ExportColumn::make('kondisi_pengembalian_detail')
+                ->label('Kondisi Pengembalian')
+                ->formatStateUsing(function ($record) {
+                    return $record->alatPengembalians->map(function ($alat) {
+                        return $alat->nama_alat . ' (' . $alat->pivot->kondisi_pengembalian . ')';
+                    })->implode(', ');
+                }),
         ];
     }
 

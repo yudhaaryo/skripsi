@@ -23,7 +23,7 @@ class BarangResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationLabel = 'Barang';
-    protected static ?string $navigationGroup = 'Inventaris';
+    protected static ?string $navigationGroup = 'Inventaris Barang';
 
     public static function form(Form $form): Form
     {
