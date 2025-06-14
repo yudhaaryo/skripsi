@@ -23,10 +23,11 @@ class Peminjaman extends Model
         'user_id',
     ];
 
-    public function alats()
+
+    public function alatDetails()
     {
-        return $this->belongsToMany(Alat::class, 'alat_peminjaman')
-            ->withPivot(['jumlah_pinjam', 'kondisi_peminjaman'])
+        return $this->belongsToMany(AlatDetail::class, 'peminjaman_alat_detail')
+            ->withPivot(['kondisi_saat_pinjam', 'kondisi_saat_kembali', 'keterangan'])
             ->withTimestamps();
     }
 

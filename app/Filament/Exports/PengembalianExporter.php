@@ -11,38 +11,38 @@ class PengembalianExporter extends Exporter
 {
     protected static ?string $model = Pengembalian::class;
     public static function resolveRecord($record): \Illuminate\Database\Eloquent\Model
-{
-    return $record->load(['peminjaman', 'alatPengembalians']);
-}
-
+    {
+        return $record->load(['peminjaman.alatDetails.alat', 'peminjaman.user']);
+    }
 
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('id')
-                ->label('ID'),
+            ExportColumn::make('id')->label('ID'),
 
-            ExportColumn::make('peminjaman.nama_peminjam')
-                ->label('Nama Peminjam'),
+            ExportColumn::make('peminjaman.user.name')->label('Nama Peminjam'),
 
-                ExportColumn::make('nama_alat')
+            ExportColumn::make('nama_alat')
                 ->label('Nama Alat')
                 ->formatStateUsing(function ($record) {
-                    return $record->alatPengembalians->pluck('nama_alat')->implode(', ');
+                    return $record->peminjaman?->alatDetails?->map(function ($detail) {
+                        return $detail->alat->nama_alat . ' - Unit ' . $detail->no_unit;
+                    })->implode(', ') ?? '';
                 }),
 
-            ExportColumn::make('peminjaman.tanggal_pinjam')
-                ->label('Tanggal Peminjaman'),
+            ExportColumn::make('peminjaman.tanggal_pinjam')->label('Tanggal Peminjaman'),
 
-            ExportColumn::make('tanggal_pengembalian')
-                ->label('Tanggal Pengembalian'),
+            ExportColumn::make('tanggal_pengembalian')->label('Tanggal Pengembalian'),
 
             ExportColumn::make('kondisi_pengembalian_detail')
                 ->label('Kondisi Pengembalian')
                 ->formatStateUsing(function ($record) {
-                    return $record->alatPengembalians->map(function ($alat) {
-                        return $alat->nama_alat . ' (' . $alat->pivot->kondisi_pengembalian . ')';
-                    })->implode(', ');
+                    return $record->peminjaman?->alatDetails?->map(function ($detail) {
+                        $namaAlat = $detail->alat->nama_alat ?? '-';
+                        $unit = $detail->no_unit ?? '-';
+                        $kondisi = $detail->pivot->kondisi_saat_kembali ?? '-';
+                        return "{$namaAlat} (Unit {$unit}) [{$kondisi}]";
+                    })->implode(', ') ?? '';
                 }),
         ];
     }

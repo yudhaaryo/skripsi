@@ -19,28 +19,27 @@ class CreatePeminjaman extends CreateRecord
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
-{
-    // Ambil data pivot alat
-    $this->alatPivotData = collect($data['alats'] ?? [])
-        ->mapWithKeys(fn ($item) => [
-            $item['alat_id'] => [
-                'jumlah_pinjam' => $item['jumlah_pinjam'] ?? 1,
-                'kondisi_peminjaman' => $item['kondisi_peminjaman'] ?? null,
-            ]
-        ])
-        ->toArray();
+    {
 
-    unset($data['alats']);
-    $data['user_id'] = auth()->id();
+        $this->alatPivotData = collect($data['alatDetails'] ?? [])
+            ->mapWithKeys(fn ($item) => [
+                $item['alat_detail_id'] => [
+                    'kondisi_saat_pinjam' => $item['kondisi_saat_pinjam'] ?? null,
+                    'keterangan' => $item['keterangan'] ?? null,
+                ]
+            ])
+            ->toArray();
 
-    return $data;
-}
+        unset($data['alatDetails']);
+        $data['user_id'] = auth()->id();
 
+        return $data;
+    }
 
     protected function afterCreate(): void
     {
-        // Simpan relasi pivot setelah data utama dibuat
-        $this->record->alats()->sync($this->alatPivotData);
+
+        $this->record->alatDetails()->sync($this->alatPivotData);
     }
 
     protected function getRedirectUrl(): string

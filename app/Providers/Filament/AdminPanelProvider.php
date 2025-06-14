@@ -3,10 +3,6 @@
 namespace App\Providers\Filament;
 
 use AdminDashboard;
-use App\Filament\Admin\Pages\Dashboard;
-use App\Filament\Widgets\StatPeminjamanWidget;
-use App\Filament\Widgets\StatPengembalianWidget;
-use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -14,15 +10,24 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
+use App\Filament\Resources\AlatResource;
+use App\Filament\Resources\AlatDetailResource;
+use App\Filament\Resources\PeminjamanResource;
+use App\Filament\Resources\PengembalianResource;
+use App\Filament\Resources\BarangResource;
+use App\Filament\Resources\BarangMasukResource;
+use App\Filament\Resources\BarangKeluarResource;
+use App\Filament\Resources\UserResource;
+use App\Filament\Resources\PeranResource;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -34,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->registration()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Green,
             ])
@@ -74,6 +80,38 @@ class AdminPanelProvider extends PanelProvider
 
 
     }
+    public function navigation(NavigationBuilder $builder): NavigationBuilder
+{
+    return $builder
+        ->groups([
+            NavigationGroup::make()
+                ->label('Peminjaman Alat')
+                ->items([
+                    AlatResource::class,
+                    AlatDetailResource::class,
+                    PeminjamanResource::class,
+                    PengembalianResource::class,
+                ]),
+            NavigationGroup::make()
+                ->label('Inventaris Barang')
+                ->items([
+                    BarangKeluarResource::class,
+                    BarangMasukResource::class,
+                    BarangResource::class,
+                ]),
+            NavigationGroup::make()
+                ->label('Manajemen Pengguna')
+                ->items([
+                    UserResource::class,
+                ]),
+            NavigationGroup::make()
+                ->label('Pelindung')
+                ->items([
+                    PeranResource::class,
+                ]),
+        ]);
+}
+
 
     // public function boot(): void
     // {

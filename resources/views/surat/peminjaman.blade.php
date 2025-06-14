@@ -53,7 +53,8 @@
                 <h4 style="margin: 0;">DINAS PENDIDIKAN, PEMUDA, DAN OLAHRAGA</h4>
                 <h4 style="margin: 0;">BALAI PENDIDIKAN MENENGAH KOTA YOGYAKARTA</h4>
                 <h2 style="margin: 6px 0;">SMKN 3 YOGYAKARTA</h2>
-                <p style="font-size: 12px; margin: 4px 0;">ꦱꦩ꧀ꦏ꧀ ꧓ ꦪꦺꦴꦒ꧀ꦪꦏꦂꦠ</p>
+                <img src="{{ 'img/aksarajawa.png' }}" alt="Aksara Jawa"
+                    style="max-width: 320px; height: auto; display: block; margin: 0 auto 20px;">
                 <p style="font-size: 12px; margin: 2px 0;">
                     Jalan RW. Monginsidi No. 2 Yogyakarta, Kode Pos 55233, Telp. (0274) 513503
                 </p>
@@ -96,21 +97,28 @@
             <tr>
                 <th>No</th>
                 <th>Jenis Barang & Spesifikasi</th>
-                <th>Jumlah</th>
-                <th>Kondisi Alat</th>
+                <th>No. Unit</th>
+                <th>Kode Alat (Unit)</th>
+                <th>Tahun</th>
+                <th>Kondisi Saat Dipinjam</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($peminjaman->alats as $index => $alat)
+            @foreach ($peminjaman->alatDetails as $index => $detail)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $alat->nama_alat ?? '-' }}</td>
-                    <td>{{ $alat->pivot->jumlah_pinjam ?? '-' }}</td>
-                    <td>{{ $alat->pivot->kondisi_peminjaman ?? '-' }}</td>
+                    <td>{{ $detail->alat->nama_alat ?? '-' }}</td>
+                    <td>{{ $detail->no_unit }}</td>
+                    <td>{{ $detail->kode_alat }}</td>
+                    <td>{{ $detail->tahun_alat }}</td>
+                    <td>{{ $detail->pivot->kondisi_saat_pinjam ?? $detail->kondisi_alat }}</td>
+                    <td>{{ $detail->pivot->keterangan ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
 
 
     {{-- TANDA TANGAN --}}

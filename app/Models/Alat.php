@@ -23,4 +23,16 @@ class Alat extends Model
     {
         return $this->belongsToMany(Peminjaman::class, 'alat_peminjaman')->withPivot('jumlah_pinjam', 'kondisi_peminjaman')->withTimestamps();
     }
+    public function details()
+{
+    return $this->hasMany(AlatDetail::class, 'alat_id');
+}
+
+public function stokTersedia()
+{
+    return $this->details()->whereDoesntHave('peminjamans', function ($q) {
+        $q->where('status_pinjam', 'dipinjam');
+    })->count();
+}
+
 }

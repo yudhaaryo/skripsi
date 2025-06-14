@@ -9,7 +9,7 @@ class SuratPeminjamanController extends Controller
 {
     public function show($id)
     {
-        $peminjaman = Peminjaman::with('alats')->findOrFail($id);
+        $peminjaman = Peminjaman::with('alatDetails.alat')->findOrFail($id);
 
         $pdf = Pdf::loadView('surat.peminjaman', compact('peminjaman'));
 

@@ -18,6 +18,7 @@ use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use App\Filament\Exports\PengembalianExporter;
+use Filament\Forms\Components\Select;
 
 class PengembalianResource extends Resource
 {
@@ -26,19 +27,18 @@ class PengembalianResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-archive-box-arrow-down';
     protected static ?string $navigationGroup = 'Peminjaman Alat';
 
+    protected static ?int $navigationSort = 3;
+
+
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                DatePicker::make('tanggal_pengembalian')
-                    ->required(),
-                TextInput::make('kondisi_pengembalian')
-                    ->required(),
-                TextInput::make('peminjaman_id')
-                    ->required(),
-            ]);
-    }
+{
+    return $form
+        ->schema([
+
+        ]);
+}
+
 
     public static function table(Table $table): Table
 {
@@ -46,27 +46,34 @@ class PengembalianResource extends Resource
         ->columns([
             TextColumn::make('id')->label('ID'),
 
-            TextColumn::make('peminjaman.nama_peminjam')->label('Nama Peminjam'),
+            TextColumn::make('peminjaman.user.name')->label('Nama Peminjam'),
 
             TextColumn::make('peminjaman.tanggal_pinjam')->label('Tanggal Peminjaman'),
 
             TextColumn::make('tanggal_pengembalian')->label('Tanggal Pengembalian'),
 
-            TextColumn::make('peminjaman.alats')
-                ->label('Nama Alat')
-                ->formatStateUsing(function ($state, $record) {
-                    return $record->peminjaman->alats->pluck('nama_alat')->implode(', ');
-                })
-                ->wrap(),
+            TextColumn::make('peminjaman.alatDetails')
+    ->label('Nama Alat')
+    ->formatStateUsing(function ($state, $record) {
+        return $record->peminjaman->alatDetails->map(function ($detail) {
+            return $detail->alat->nama_alat ?? '-' . ' - Unit ' . $detail->no_unit;
+        })->implode(', ');
+    })
+    ->wrap(),
 
-            TextColumn::make('kondisi_pengembalian')
-                ->label('Kondisi Pengembalian')
-                ->formatStateUsing(function ($state, $record) {
-                    return $record->peminjaman->alats->map(function ($alat) {
-                        return $alat->nama_alat . ' (' . ($alat->pivot->kondisi_peminjaman ?? '-') . ')';
-                    })->implode(', ');
-                })
-                ->wrap(),
+TextColumn::make('kondisi_pengembalian')
+    ->label('Kondisi Pengembalian')
+    ->formatStateUsing(function ($state, $record) {
+        return $record->peminjaman->alatDetails->map(function ($detail) {
+            // Ambil dari pivot, misal kondisi_saat_kembali
+            $namaAlat = $detail->alat->nama_alat ?? '-';
+            $unit = $detail->no_unit ?? '-';
+            $kondisi = $detail->pivot->kondisi_saat_kembali ?? '-';
+            return "{$namaAlat} (Unit {$unit}) [{$kondisi}]";
+        })->implode(', ');
+    })
+    ->wrap(),
+
         ])
         ->actions([
             EditAction::make(),

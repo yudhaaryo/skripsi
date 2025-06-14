@@ -48,7 +48,13 @@ class BarangResource extends Resource
                 TextColumn::make('harga_beli')->money('IDR', true),
                 TextColumn::make('jumlah_awal'),
                 TextColumn::make('satuan'),
-                TextColumn::make('tanggal_masuk')->label('Tanggal Masuk')->date('d M Y'),
+                TextColumn::make('barangMasuks.tanggal_masuk')
+                ->label('Tanggal Masuk Terakhir')
+                ->formatStateUsing(fn ($state, $record) =>
+                    optional($record->barangMasuks->sortByDesc('tanggal_masuk')->first())->tanggal_masuk
+                )
+                ->date('d M Y'),
+
             ])
             ->filters([])
             ->actions([

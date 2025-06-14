@@ -19,42 +19,41 @@ class EditPeminjaman extends EditRecord
     }
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['alats'] = $this->record->alats->map(function ($alat) {
-            return [
-                'alat_id' => $alat->id,
-                'jumlah_pinjam' => $alat->pivot->jumlah_pinjam,
-                'kondisi_peminjaman' => $alat->pivot->kondisi_peminjaman,
-            ];
-        })->toArray();
+        $data['alat_details'] = $this->record->alatDetails
+            ? $this->record->alatDetails->map(function ($detail) {
+                return [
+                    'alat_detail_id' => $detail->id,
+                    'jumlah_pinjam' => $detail->pivot->jumlah_pinjam ?? 1,
+                    'kondisi_saat_pinjam' => $detail->pivot->kondisi_saat_pinjam ?? '',
+                    // tambah field lain kalau ada
+                ];
+            })->toArray()
+            : [];
 
         return $data;
     }
 
-    /**
-     * Ambil data alat dari form sebelum update record utama
-     */
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $this->alatPivotData = collect($data['alats'] ?? [])
+        $this->alatPivotData = collect($data['alat_details'] ?? [])
             ->mapWithKeys(fn ($item) => [
-                $item['alat_id'] => [
+                $item['alat_detail_id'] => [
                     'jumlah_pinjam' => $item['jumlah_pinjam'] ?? 1,
-                    'kondisi_peminjaman' => $item['kondisi_peminjaman'] ?? null,
+                    'kondisi_saat_pinjam' => $item['kondisi_saat_pinjam'] ?? '',
+                    // tambah field lain kalau ada
                 ]
             ])
             ->toArray();
 
-        unset($data['alats']);
+        unset($data['alat_details']);
         return $data;
     }
 
-    /**
-     * Update data pivot setelah update utama
-     */
     protected function afterSave(): void
     {
-        $this->record->alats()->sync($this->alatPivotData);
+        $this->record->alatDetails()->sync($this->alatPivotData);
     }
+
 
     protected function getRedirectUrl(): string
     {

@@ -23,7 +23,7 @@ class Pengembalian extends Model
     }
     public function alatPengembalians()
 {
-    return $this->belongsToMany(\App\Models\Alat::class, 'alat_pengembalian')
+    return $this->belongsToMany(Alat::class, 'alat_pengembalian')
         ->withPivot('kondisi_pengembalian');
 }
 
