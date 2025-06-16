@@ -10,7 +10,10 @@ use Filament\Forms\Components\{Select, TextInput, DatePicker};
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\{TextColumn, BadgeColumn};
-use Filament\Tables\Actions\{EditAction, DeleteAction};
+use Filament\Tables\Actions\{EditAction, DeleteAction, DeleteBulkAction};
+use Filament\Tables\Filters\Filter;
+
+
 
 class BarangMasukResource extends Resource
 {
@@ -22,17 +25,23 @@ class BarangMasukResource extends Resource
     {
         return $form->schema([
             Select::make('barang_id')
-             ->label('Pilih Barang')
-            ->relationship('barang', 'nama_barang_aplikasi')
-            ->createOptionForm([
-        TextInput::make('nama_barang_aplikasi')->label('Nama di Aplikasi')->required(),
-        TextInput::make('nama_barang_asli')->label('Nama Asli')->required(),
-        TextInput::make('kode_barang')->label('Kode')->required(),
-        TextInput::make('satuan')->required(),
-        TextInput::make('harga_beli')->label('Harga Beli')->numeric(),
-    ])
-    ->searchable()
-    ->required(),
+                ->label('Pilih Barang')
+                ->relationship('barang', 'nama_barang_aplikasi')
+                ->createOptionForm([
+                    TextInput::make('nama_barang_aplikasi')->label('Nama di Aplikasi')->required(),
+                    TextInput::make('nama_barang_asli')->label('Nama Asli')->required(),
+                    TextInput::make('kode_barang')->label('Kode')->required(),
+                    TextInput::make('satuan')->required(),
+                    TextInput::make('harga_beli')->label('Harga Beli')->numeric(),
+                    DatePicker::make('tanggal_masuk')
+            ->label('Tanggal Masuk')
+            ->required()
+            ->default(now()),
+            TextInput::make('jumlah_awal')->label('Jumlah Awal')->numeric()->required(),
+                ])
+                
+                ->searchable()
+                ->required(),
 
 
             TextInput::make('jumlah_masuk')
@@ -56,12 +65,25 @@ class BarangMasukResource extends Resource
                 TextColumn::make('tanggal_masuk')->label('Tanggal Masuk')->date(),
                 TextColumn::make('created_at')->label('Dibuat')->since(),
             ])
+            ->filters([
+            Filter::make('tanggal_masuk_range')
+                ->form([
+                    DatePicker::make('from')->label('Dari Tanggal'),
+                    DatePicker::make('until')->label('Sampai Tanggal'),
+                ])
+                ->query(function ($query, array $data) {
+                    return $query
+                        ->when($data['from'], fn ($q) => $q->whereDate('tanggal_masuk', '>=', $data['from']))
+                        ->when($data['until'], fn ($q) => $q->whereDate('tanggal_masuk', '<=', $data['until']));
+                }),
+        ])
+
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
             ->bulkActions([
-                \Filament\Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ]);
     }
 

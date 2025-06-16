@@ -14,7 +14,7 @@ class LaporanBarangController extends Controller
 {
     public function export(Request $request)
     {
-        $bulan = $request->input('bulan'); // format 'Y-m'
+        $bulan = $request->input('bulan'); // format 'Y-m' 
         $carbonBulan = Carbon::createFromFormat('Y-m', $bulan);
         $month = $carbonBulan->month;
         $year = $carbonBulan->year;
@@ -23,23 +23,30 @@ class LaporanBarangController extends Controller
         $tanggalAkhirBulan = $tanggalAwalBulan->copy()->endOfMonth();
 
         $barangs = Barang::all()->map(function ($barang) use ($tanggalAwalBulan, $tanggalAkhirBulan) {
-            // Barang keluar sebelum bulan ini
+            // Barang MASUK sebelum bulan ini
+            $masukSebelumBulanIni = BarangMasuk::where('barang_id', $barang->id)
+                ->where('tanggal_masuk', '<', $tanggalAwalBulan)
+                ->sum('jumlah_masuk');
+
+            // Barang KELUAR sebelum bulan ini
             $keluarSebelumBulanIni = BarangKeluar::where('barang_id', $barang->id)
                 ->where('tanggal_keluar', '<', $tanggalAwalBulan)
                 ->sum('jumlah_keluar');
 
-            // Barang keluar bulan ini
-            $keluarBulanIni = BarangKeluar::where('barang_id', $barang->id)
-                ->whereBetween('tanggal_keluar', [$tanggalAwalBulan, $tanggalAkhirBulan])
-                ->sum('jumlah_keluar');
-
-            // Barang masuk bulan ini
+            // Barang MASUK bulan ini
             $tambahBulanIni = BarangMasuk::where('barang_id', $barang->id)
                 ->whereBetween('tanggal_masuk', [$tanggalAwalBulan, $tanggalAkhirBulan])
                 ->sum('jumlah_masuk');
 
-            // Hitung saldo
-            $saldoAwal = $barang->jumlah_awal - $keluarSebelumBulanIni;
+            // Barang KELUAR bulan ini
+            $keluarBulanIni = BarangKeluar::where('barang_id', $barang->id)
+                ->whereBetween('tanggal_keluar', [$tanggalAwalBulan, $tanggalAkhirBulan])
+                ->sum('jumlah_keluar');
+
+            // Hitung SALDO AWAL: stok saat awal bulan laporan
+            $saldoAwal = $barang->jumlah_awal + $masukSebelumBulanIni - $keluarSebelumBulanIni;
+
+            // Hitung SALDO AKHIR: stok akhir bulan laporan
             $saldoAkhir = $saldoAwal + $tambahBulanIni - $keluarBulanIni;
 
             return [
@@ -57,15 +64,17 @@ class LaporanBarangController extends Controller
             ];
         });
 
+        // Filter, jika ingin menampilkan hanya yang dipakai
         $filter = $request->input('filter_penggunaan', 'semua');
         if ($filter === 'digunakan') {
             $barangs = $barangs->filter(fn($b) => $b['digunakan'] > 0);
         }
 
+        // Export Excel dengan data laporan dan judul bulan
         return Excel::download(
             new LaporanBarangHabisExport(
                 $barangs,
-                'TKJ',
+                'Nama Program', // Atau isi dari input jika ada
                 $carbonBulan->translatedFormat('F Y')
             ),
             'laporan_barang_' . $carbonBulan->format('Y_m') . '.xlsx'

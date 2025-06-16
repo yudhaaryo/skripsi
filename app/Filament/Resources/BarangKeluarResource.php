@@ -95,49 +95,7 @@ class BarangKeluarResource extends Resource
                 DeleteBulkAction::make(),
             ])
             ->headerActions([
-                ExportAction::make('export_excel')
-            ->label('Export Excel')
-            ->icon('heroicon-o-arrow-down-tray')
-            ->form([
-        DatePicker::make('bulan')
-            ->label('Pilih Bulan')
-            ->displayFormat('F Y')
-            ->native(false)
-            ->closeOnDateSelection(true)
-            ->extraAttributes([
-                'data-enable-time' => 'false',
-                'data-no-calendar' => 'false',
-                'data-date-format' => 'Y-m',
-                'data-alt-input' => 'true',
-                'data-alt-format' => 'F Y',
-                'data-default-date' => now()->format('Y-m'),
-                'data-plugins' => '[\"monthSelectPlugin\"]',
-            ])
-            ->reactive()
-            ->required(),
-
-
-
-        Select::make('filter_penggunaan')
-            ->label('Tampilkan Barang')
-            ->options([
-                'semua' => 'Tampilkan Semua Barang',
-                'digunakan' => 'Hanya Barang yang Digunakan Bulan Ini',
-            ])
-            ->default('semua')
-            ->required(),
-    ])
-    ->action(function (array $data) {
-        $queryString = http_build_query([
-            'bulan' => Carbon::parse($data['bulan'])->format('Y-m'),
-
-            'filter_penggunaan' => $data['filter_penggunaan'],
-        ]);
-
-        return redirect()->away(route('export-barang') . '?' . $queryString);
-    }),
             ]);
-
     }
 
     public static function getRelations(): array

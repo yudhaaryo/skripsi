@@ -77,6 +77,10 @@ class UserResource extends Resource
     {
         return [];
     }
+public static function canViewAny(): bool
+{
+    return auth()->user()?->can('view_any_user') ?? false;
+}
 
     public static function getPages(): array
     {

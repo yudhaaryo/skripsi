@@ -61,7 +61,7 @@ class PeminjamanResource extends Resource
             ->disabled(fn () => auth()->user()?->hasRole('siswa'))
             ->required(),
 
-        Repeater::make('alat_detail_id')
+        Repeater::make('alats')
             ->label('Pilih Unit Alat')
             ->schema([
                 Select::make('alat_detail_id')
@@ -125,7 +125,7 @@ class PeminjamanResource extends Resource
                 TextColumn::make('tanggal_pinjam'),
                 TextColumn::make('tanggal_kembali'),
 
-                TextColumn::make('alatDetails')
+                 TextColumn::make('alatDetails')
                     ->label('Unit Alat Dipinjam')
                     ->formatStateUsing(function ($record) {
                         return $record->alatDetails->map(function ($detail) {
@@ -343,25 +343,6 @@ class PeminjamanResource extends Resource
             'edit' => Pages\EditPeminjaman::route('/{record}/edit'),
         ];
     }
-    protected static function afterCreate(Form $form): void
-    {
-        $record = $form->getModelInstance();
-        foreach ($form->getState()['alats'] as $alat) {
-            $record->alats()->updateExistingPivot($alat['alat_id'], [
-                'jumlah_pinjam' => $alat['jumlah_pinjam'],
-                'kondisi_peminjaman' => $alat['kondisi_peminjaman'],
-            ]);
-        }
-    }
+ 
 
-    protected static function afterUpdate(Form $form): void
-    {
-        $record = $form->getModelInstance();
-        foreach ($form->getState()['alats'] as $alat) {
-            $record->alats()->updateExistingPivot($alat['alat_id'], [
-                'jumlah_pinjam' => $alat['jumlah_pinjam'],
-                'kondisi_peminjaman' => $alat['kondisi_peminjaman'],
-            ]);
-        }
-    }
 }

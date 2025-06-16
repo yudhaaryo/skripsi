@@ -14,8 +14,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ExportAction;
+use Filament\Form\Components\Select;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Carbon\Carbon;
+
 
 class BarangResource extends Resource
 {
@@ -24,6 +27,11 @@ class BarangResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationLabel = 'Barang';
     protected static ?string $navigationGroup = 'Inventaris Barang';
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
 
     public static function form(Form $form): Form
     {
@@ -47,13 +55,19 @@ class BarangResource extends Resource
                 TextColumn::make('nama_barang_aplikasi')->label('Nama di Aplikasi')->searchable(),
                 TextColumn::make('harga_beli')->money('IDR', true),
                 TextColumn::make('jumlah_awal'),
+                TextColumn::make('total_barang')
+                    ->label('Total Barang')
+                    ->getStateUsing(fn($record) => $record->total_barang)
+                    ->sortable(),
+
                 TextColumn::make('satuan'),
                 TextColumn::make('barangMasuks.tanggal_masuk')
-                ->label('Tanggal Masuk Terakhir')
-                ->formatStateUsing(fn ($state, $record) =>
-                    optional($record->barangMasuks->sortByDesc('tanggal_masuk')->first())->tanggal_masuk
-                )
-                ->date('d M Y'),
+                    ->label('Tanggal Masuk Terakhir')
+                    ->formatStateUsing(
+                        fn($state, $record) =>
+                        optional($record->barangMasuks->sortByDesc('tanggal_masuk')->first())->tanggal_masuk
+                    )
+                    ->date('d M Y'),
 
             ])
             ->filters([])
@@ -65,7 +79,47 @@ class BarangResource extends Resource
                 DeleteBulkAction::make(),
             ])
             ->headerActions([
-                ExportAction::make()->exporter(BarangExporter::class),
+                ExportAction::make('export_excel')
+            ->label('Export Excel')
+            ->icon('heroicon-o-arrow-down-tray')
+            ->form([
+        DatePicker::make('bulan')
+            ->label('Pilih Bulan')
+            ->displayFormat('F Y')
+            ->native(false)
+            ->closeOnDateSelection(true)
+            ->extraAttributes([
+                'data-enable-time' => 'false',
+                'data-no-calendar' => 'false',
+                'data-date-format' => 'Y-m',
+                'data-alt-input' => 'true',
+                'data-alt-format' => 'F Y',
+                'data-default-date' => now()->format('Y-m'),
+                'data-plugins' => '[\"monthSelectPlugin\"]',
+            ])
+            ->reactive()
+            ->required(),
+
+
+
+        \Filament\Forms\Components\Select::make('filter_penggunaan')
+            ->label('Tampilkan Barang')
+            ->options([
+                'semua' => 'Tampilkan Semua Barang',
+                'digunakan' => 'Hanya Barang yang Digunakan Bulan Ini',
+            ])
+            ->default('semua')
+            ->required(),
+    ])
+    ->action(function (array $data) {
+        $queryString = http_build_query([
+            'bulan' => Carbon::parse($data['bulan'])->format('Y-m'),
+
+            'filter_penggunaan' => $data['filter_penggunaan'],
+        ]);
+
+        return redirect()->away(route('export-barang') . '?' . $queryString);
+    }),
             ]);
     }
 

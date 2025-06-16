@@ -18,41 +18,39 @@ class EditPeminjaman extends EditRecord
         return $user?->hasAnyRole(['admin', 'guru']) || $user?->name === $parameters['record']?->nama_peminjam;
     }
     protected function mutateFormDataBeforeFill(array $data): array
-    {
-        $data['alat_details'] = $this->record->alatDetails
-            ? $this->record->alatDetails->map(function ($detail) {
-                return [
-                    'alat_detail_id' => $detail->id,
-                    'jumlah_pinjam' => $detail->pivot->jumlah_pinjam ?? 1,
-                    'kondisi_saat_pinjam' => $detail->pivot->kondisi_saat_pinjam ?? '',
-                    // tambah field lain kalau ada
-                ];
-            })->toArray()
-            : [];
+{
+    $data['alats'] = $this->record->alatDetails
+        ? $this->record->alatDetails->map(function ($detail) {
+            return [
+                'alat_detail_id' => $detail->id,
+                'kondisi_saat_pinjam' => $detail->pivot->kondisi_saat_pinjam ?? '',
+                'keterangan' => $detail->pivot->keterangan ?? '',
+            ];
+        })->toArray()
+        : [];
+    return $data;
+}
 
-        return $data;
-    }
+protected function mutateFormDataBeforeSave(array $data): array
+{
+    $this->alatPivotData = collect($data['alats'] ?? [])
+        ->mapWithKeys(fn ($item) => [
+            $item['alat_detail_id'] => [
+                'kondisi_saat_pinjam' => $item['kondisi_saat_pinjam'] ?? '',
+                'keterangan' => $item['keterangan'] ?? '',
+            ]
+        ])
+        ->toArray();
 
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        $this->alatPivotData = collect($data['alat_details'] ?? [])
-            ->mapWithKeys(fn ($item) => [
-                $item['alat_detail_id'] => [
-                    'jumlah_pinjam' => $item['jumlah_pinjam'] ?? 1,
-                    'kondisi_saat_pinjam' => $item['kondisi_saat_pinjam'] ?? '',
-                    // tambah field lain kalau ada
-                ]
-            ])
-            ->toArray();
+    unset($data['alats']);
+    return $data;
+}
 
-        unset($data['alat_details']);
-        return $data;
-    }
+protected function afterSave(): void
+{
+    $this->record->alatDetails()->sync($this->alatPivotData);
+}
 
-    protected function afterSave(): void
-    {
-        $this->record->alatDetails()->sync($this->alatPivotData);
-    }
 
 
     protected function getRedirectUrl(): string

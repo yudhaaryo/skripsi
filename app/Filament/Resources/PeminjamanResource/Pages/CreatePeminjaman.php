@@ -19,28 +19,27 @@ class CreatePeminjaman extends CreateRecord
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
-    {
+{
+    $this->alatPivotData = collect($data['alats'] ?? [])
+        ->mapWithKeys(fn ($item) => [
+            $item['alat_detail_id'] => [
+                'kondisi_saat_pinjam' => $item['kondisi_saat_pinjam'] ?? null,
+                'keterangan' => $item['keterangan'] ?? null,
+            ]
+        ])
+        ->toArray();
 
-        $this->alatPivotData = collect($data['alatDetails'] ?? [])
-            ->mapWithKeys(fn ($item) => [
-                $item['alat_detail_id'] => [
-                    'kondisi_saat_pinjam' => $item['kondisi_saat_pinjam'] ?? null,
-                    'keterangan' => $item['keterangan'] ?? null,
-                ]
-            ])
-            ->toArray();
+    unset($data['alats']);
+    $data['user_id'] = auth()->id();
 
-        unset($data['alatDetails']);
-        $data['user_id'] = auth()->id();
+    return $data;
+}
 
-        return $data;
-    }
+protected function afterCreate(): void
+{
+    $this->record->alatDetails()->sync($this->alatPivotData);
+}
 
-    protected function afterCreate(): void
-    {
-
-        $this->record->alatDetails()->sync($this->alatPivotData);
-    }
 
     protected function getRedirectUrl(): string
     {

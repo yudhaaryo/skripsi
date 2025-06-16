@@ -13,7 +13,7 @@ class Alat extends Model
         'nama_alat',
         'kode_alat',
         'jumlah_alat',
-        'kondisi_alat',
+        
         'merk_alat',
         'sumber_dana',
         'tahun_alat',

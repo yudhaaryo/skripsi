@@ -10,6 +10,12 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\{
+    Select,
+    TextInput,
+    TextArea,
+    Repeater
+};
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\TextColumn;
@@ -24,34 +30,104 @@ class AlatDetailResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
+
+
+
+
+   public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            \Filament\Forms\Components\Select::make('alat_id')
+                ->label('Tipe/Merk Alat')
+                ->relationship('alat', 'nama_alat')
+                ->searchable()
+                ->required()
+                ->reactive(),
+
+            \Filament\Forms\Components\Select::make('no_unit')
+                ->label('Nomor Unit')
+                ->options(function (callable $get) {
+                    $alatId = $get('alat_id');
+                    if (!$alatId) return [];
+                    $maxUnit = 10;
+                    $usedUnits = \App\Models\AlatDetail::where('alat_id', $alatId)
+                        ->pluck('no_unit')
+                        ->map(fn($v) => (int) $v)
+                        ->toArray();
+
+                    $available = [];
+                    for ($i = 1; $i <= $maxUnit; $i++) {
+                        if (!in_array($i, $usedUnits)) {
+                            $available[$i] = "Unit $i";
+                        }
+                    }
+                    return $available;
+                })
+                ->required()
+                ->reactive(),
+
+            \Filament\Forms\Components\TextInput::make('tahun_alat')
+                ->label('Tahun Alat')
+                ->numeric()
+                ->minValue(1980)
+                ->maxValue(date('Y'))
+                ->required(),
+
+            \Filament\Forms\Components\TextInput::make('kode_alat')
+                ->label('Kode Inventaris')
+                ->default(function (callable $get) {
+                    $alatId = $get('alat_id');
+                    if (!$alatId) return null;
+                    $alat = \App\Models\Alat::find($alatId);
+                    if (!$alat) return null;
+                    return $alat->kode_alat;
+                })
+                ->disabled()
+                ->dehydrated(false) // tidak dikirim, harus generate ulang di Page
+                ->hint('Kode otomatis dari master'),
+
+            \Filament\Forms\Components\Select::make('kondisi_alat')
+                ->label('Kondisi Alat')
+                ->options([
+                    'Baik' => 'Baik',
+                    'Rusak Ringan' => 'Rusak Ringan',
+                    'Rusak Berat' => 'Rusak Berat',
+                    'Hilang' => 'Hilang',
+                ])
+                ->required(),
+
+            \Filament\Forms\Components\Textarea::make('keterangan')
+                ->label('Keterangan')
+                ->rows(2)
+                ->nullable(),
+        ]);
+}
+
+
+
+
 
     public static function table(Table $table): Table
     {
         return $table
-        ->columns([
-            TextColumn::make('alat.nama_alat')->label('Nama Alat Induk'),
-            TextColumn::make('no_unit')->label('No. Unit'),
-            TextColumn::make('kode_alat')->label('Kode Unit'),
-            TextColumn::make('tahun_alat')->label('Tahun'),
-            TextColumn::make('kondisi_alat')->label('Kondisi'),
-            TextColumn::make('status')
-                ->label('Status')
-                ->getStateUsing(function ($record) {
-                    return $record->peminjamans()->where('status_pinjam', 'dipinjam')->exists() ? 'Dipinjam' : 'Tersedia';
-                })
-                ->badge()
-                ->colors([
-                    'success' => 'Tersedia',
-                    'danger' => 'Dipinjam',
-                ]),
-        ])
+            ->columns([
+                TextColumn::make('alat.nama_alat')->label('Nama Alat Induk'),
+                TextColumn::make('no_unit')->label('No. Unit'),
+                TextColumn::make('kode_alat')->label('Kode Unit'),
+                TextColumn::make('tahun_alat')->label('Tahun'),
+                TextColumn::make('kondisi_alat')->label('Kondisi'),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->getStateUsing(function ($record) {
+                        return $record->peminjamans()->where('status_pinjam', 'dipinjam')->exists() ? 'Dipinjam' : 'Tersedia';
+                    })
+                    ->badge()
+                    ->colors([
+                        'success' => 'Tersedia',
+                        'danger' => 'Dipinjam',
+                    ]),
+            ])
             ->filters([
                 //
             ])

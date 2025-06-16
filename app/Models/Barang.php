@@ -23,7 +23,12 @@ class Barang extends Model
 
 
 
-
+public function getTotalBarangAttribute()
+{
+    $totalMasuk = $this->barangMasuks()->sum('jumlah_masuk');
+    $totalKeluar = $this->barangKeluars()->sum('jumlah_keluar');
+    return $this->jumlah_awal + $totalMasuk - $totalKeluar;
+}
 
     public function barangKeluars()
 {
