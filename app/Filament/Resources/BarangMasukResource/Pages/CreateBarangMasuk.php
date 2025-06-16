@@ -9,6 +9,10 @@ use App\Filament\Resources\BarangMasukResource;
 class CreateBarangMasuk extends CreateRecord
 {
     protected static string $resource = BarangMasukResource::class;
+     protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 
     
 }

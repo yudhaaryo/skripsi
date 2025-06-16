@@ -9,6 +9,11 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Actions\Action;
+use Filament\Resources\Components\Tab;
+
+
+
+
 
 class ListPeminjamen extends ListRecords
 {
@@ -24,6 +29,27 @@ class ListPeminjamen extends ListRecords
     {
         return Auth::user()?->hasAnyRole(['admin', 'guru', 'siswa']);
     }
+    public function getTabs(): array
+{
+    return [
+        'Semua' => Tab::make(),
+
+        'Peminjaman Minggu Ini' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) =>
+                $query->whereBetween('tanggal_pinjam', [
+                    now()->startOfWeek()->toDateString(),
+                    now()->endOfWeek()->toDateString(),
+                ])
+            ),
+
+        'Peminjaman Bulan Ini' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) =>
+                $query->whereMonth('tanggal_pinjam', now()->month)
+                      ->whereYear('tanggal_pinjam', now()->year)
+            ),
+    ];
+}
+
 
     protected function getHeaderActions(): array
     {
@@ -32,32 +58,5 @@ class ListPeminjamen extends ListRecords
         ];
     }
 
-    protected function getTableActions(): array
-    {
-        return [
-            Action::make('setujui')
-                ->label('Setujui')
-                ->color('success')
-                ->icon('heroicon-o-check-circle')
-                ->visible(fn ($record) => Auth::user()->hasRole('admin') && $record->status_pinjam === 'menunggu')
-                ->requiresConfirmation()
-                ->action(fn ($record) => $record->update(['status_pinjam' => 'disetujui'])),
-
-            Action::make('proses')
-                ->label('Proses')
-                ->color('warning')
-                ->icon('heroicon-o-clock')
-                ->visible(fn ($record) => Auth::user()->hasRole('admin') && $record->status_pinjam === 'disetujui')
-                ->requiresConfirmation()
-                ->action(fn ($record) => $record->update(['status_pinjam' => 'diproses'])),
-
-            Action::make('tolak')
-                ->label('Tolak')
-                ->color('danger')
-                ->icon('heroicon-o-x-circle')
-                ->visible(fn ($record) => Auth::user()->hasRole('admin') && $record->status_pinjam === 'menunggu')
-                ->requiresConfirmation()
-                ->action(fn ($record) => $record->update(['status_pinjam' => 'ditolak'])),
-        ];
-    }
+    
 }

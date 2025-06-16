@@ -23,9 +23,9 @@ class ListBarangKeluars extends ListRecords
     public function getTabs(): array
 {
     return [
-        'All' => Tab::make(),
+        'Semua' => Tab::make(),
 
-        'This Week' => Tab::make()
+        'Barang Keluar Minggu Ini' => Tab::make()
             ->modifyQueryUsing(fn (Builder $query) =>
                 $query->whereBetween('tanggal_keluar', [
                     now()->subDays(7)->toDateString(),
@@ -33,7 +33,7 @@ class ListBarangKeluars extends ListRecords
                 ])
             ),
 
-        'This Month' => Tab::make()
+        'Barang Keluar Bulan Ini' => Tab::make()
             ->modifyQueryUsing(fn (Builder $query) =>
                 $query->whereMonth('tanggal_keluar', now()->month)
                       ->whereYear('tanggal_keluar', now()->year)

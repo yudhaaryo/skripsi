@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Storage;
 class PeminjamanResource extends Resource
 {
     protected static ?string $model = Peminjaman::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
     protected static ?string $navigationGroup = 'Peminjaman Alat';
     protected static ?string $navigationLabel = 'Peminjaman';
     protected static ?int $navigationSort = 2;

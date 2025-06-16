@@ -27,6 +27,8 @@ class BarangResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationLabel = 'Barang';
     protected static ?string $navigationGroup = 'Inventaris Barang';
+    protected static ?int $navigationSort = 0;
+
     public static function canCreate(): bool
     {
         return false;

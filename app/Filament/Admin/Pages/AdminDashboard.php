@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Resources\PeminjamanResource\Widgets\TerlambatKembaliWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Widgets\AccountWidget;
 
@@ -25,6 +26,7 @@ class AdminDashboard extends BaseDashboard
             StatWidget::class,
 
             GrafikPeminjamanBulanan::class,
+            TerlambatKembaliWidget::class,
         ];
     }
 }

@@ -16,17 +16,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Navigation\NavigationBuilder;
-use Filament\Navigation\NavigationGroup;
-use App\Filament\Resources\AlatResource;
-use App\Filament\Resources\AlatDetailResource;
-use App\Filament\Resources\PeminjamanResource;
-use App\Filament\Resources\PengembalianResource;
-use App\Filament\Resources\BarangResource;
-use App\Filament\Resources\BarangMasukResource;
-use App\Filament\Resources\BarangKeluarResource;
-use App\Filament\Resources\UserResource;
-use App\Filament\Resources\PeranResource;
+
 
 
 class AdminPanelProvider extends PanelProvider
@@ -80,37 +70,7 @@ class AdminPanelProvider extends PanelProvider
 
 
     }
-    public function navigation(NavigationBuilder $builder): NavigationBuilder
-{
-    return $builder
-        ->groups([
-            NavigationGroup::make()
-                ->label('Peminjaman Alat')
-                ->items([
-                    AlatResource::class,
-                    AlatDetailResource::class,
-                    PeminjamanResource::class,
-                    PengembalianResource::class,
-                ]),
-            NavigationGroup::make()
-                ->label('Inventaris Barang')
-                ->items([
-                    BarangKeluarResource::class,
-                    BarangMasukResource::class,
-                    BarangResource::class,
-                ]),
-            NavigationGroup::make()
-                ->label('Manajemen Pengguna')
-                ->items([
-                    UserResource::class,
-                ]),
-            NavigationGroup::make()
-                ->label('Pelindung')
-                ->items([
-                    PeranResource::class,
-                ]),
-        ]);
-}
+   
 
 
     // public function boot(): void

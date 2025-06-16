@@ -28,7 +28,7 @@ class AlatDetailResource extends Resource
 
 
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
 
 
@@ -38,14 +38,14 @@ class AlatDetailResource extends Resource
 {
     return $form
         ->schema([
-            \Filament\Forms\Components\Select::make('alat_id')
+            Select::make('alat_id')
                 ->label('Tipe/Merk Alat')
                 ->relationship('alat', 'nama_alat')
                 ->searchable()
                 ->required()
                 ->reactive(),
 
-            \Filament\Forms\Components\Select::make('no_unit')
+            Select::make('no_unit')
                 ->label('Nomor Unit')
                 ->options(function (callable $get) {
                     $alatId = $get('alat_id');
@@ -67,14 +67,14 @@ class AlatDetailResource extends Resource
                 ->required()
                 ->reactive(),
 
-            \Filament\Forms\Components\TextInput::make('tahun_alat')
+            TextInput::make('tahun_alat')
                 ->label('Tahun Alat')
                 ->numeric()
                 ->minValue(1980)
                 ->maxValue(date('Y'))
                 ->required(),
 
-            \Filament\Forms\Components\TextInput::make('kode_alat')
+            TextInput::make('kode_alat')
                 ->label('Kode Inventaris')
                 ->default(function (callable $get) {
                     $alatId = $get('alat_id');
@@ -87,7 +87,7 @@ class AlatDetailResource extends Resource
                 ->dehydrated(false) // tidak dikirim, harus generate ulang di Page
                 ->hint('Kode otomatis dari master'),
 
-            \Filament\Forms\Components\Select::make('kondisi_alat')
+            Select::make('kondisi_alat')
                 ->label('Kondisi Alat')
                 ->options([
                     'Baik' => 'Baik',
@@ -97,7 +97,7 @@ class AlatDetailResource extends Resource
                 ])
                 ->required(),
 
-            \Filament\Forms\Components\Textarea::make('keterangan')
+            TextArea::make('keterangan')
                 ->label('Keterangan')
                 ->rows(2)
                 ->nullable(),

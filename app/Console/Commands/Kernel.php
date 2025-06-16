@@ -9,7 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule)
     {
-        // Ini untuk jalanin command kirim email keterlambatan setiap jam 11 malam
+        
         $schedule->command('cek:terlambat')->dailyAt('07:00');
     }
 

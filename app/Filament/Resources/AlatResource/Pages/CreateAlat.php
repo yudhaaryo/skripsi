@@ -13,4 +13,8 @@ class CreateAlat extends CreateRecord
     {
         return 'Tambah alat';
     }
+     protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

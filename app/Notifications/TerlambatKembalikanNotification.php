@@ -31,7 +31,6 @@ class TerlambatKembalikanNotification extends Notification
             ->line('Pengembalian alat yang Anda pinjam telah melewati batas waktu.')
             ->line('Tanggal seharusnya dikembalikan: ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_kembali)->translatedFormat('l, d F Y'))
             ->line('Mohon segera mengembalikan alat tersebut ke petugas.')
-            ->action('Lihat Detail Peminjaman', url('/admin/peminjaman')) // sesuaikan route jika perlu
             ->line('Terima kasih.');
     }
 }

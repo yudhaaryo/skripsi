@@ -18,8 +18,10 @@ use Filament\Tables\Filters\Filter;
 class BarangMasukResource extends Resource
 {
     protected static ?string $model = BarangMasuk::class;
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-down-on-square';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box-arrow-down';
     protected static ?string $navigationGroup = 'Inventaris Barang';
+    protected static ?int $navigationSort = 1;
+
 
     public static function form(Form $form): Form
     {
@@ -34,12 +36,12 @@ class BarangMasukResource extends Resource
                     TextInput::make('satuan')->required(),
                     TextInput::make('harga_beli')->label('Harga Beli')->numeric(),
                     DatePicker::make('tanggal_masuk')
-            ->label('Tanggal Masuk')
-            ->required()
-            ->default(now()),
-            TextInput::make('jumlah_awal')->label('Jumlah Awal')->numeric()->required(),
+                        ->label('Tanggal Masuk')
+                        ->required()
+                        ->default(now()),
+                    TextInput::make('jumlah_awal')->label('Jumlah Awal')->numeric()->required(),
                 ])
-                
+
                 ->searchable()
                 ->required(),
 
@@ -66,17 +68,17 @@ class BarangMasukResource extends Resource
                 TextColumn::make('created_at')->label('Dibuat')->since(),
             ])
             ->filters([
-            Filter::make('tanggal_masuk_range')
-                ->form([
-                    DatePicker::make('from')->label('Dari Tanggal'),
-                    DatePicker::make('until')->label('Sampai Tanggal'),
-                ])
-                ->query(function ($query, array $data) {
-                    return $query
-                        ->when($data['from'], fn ($q) => $q->whereDate('tanggal_masuk', '>=', $data['from']))
-                        ->when($data['until'], fn ($q) => $q->whereDate('tanggal_masuk', '<=', $data['until']));
-                }),
-        ])
+                Filter::make('tanggal_masuk_range')
+                    ->form([
+                        DatePicker::make('from')->label('Dari Tanggal'),
+                        DatePicker::make('until')->label('Sampai Tanggal'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when($data['from'], fn($q) => $q->whereDate('tanggal_masuk', '>=', $data['from']))
+                            ->when($data['until'], fn($q) => $q->whereDate('tanggal_masuk', '<=', $data['until']));
+                    }),
+            ])
 
             ->actions([
                 EditAction::make(),

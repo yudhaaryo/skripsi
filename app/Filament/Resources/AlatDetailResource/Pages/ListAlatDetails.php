@@ -13,7 +13,8 @@ class ListAlatDetails extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+            ->label('Tambah Dari Yang Sudah Ada'),
         ];
     }
 }

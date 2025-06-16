@@ -23,7 +23,7 @@ class AlatResource extends Resource
 {
     protected static ?string $model = Alat::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench';
     protected static ?string $navigationGroup = 'Peminjaman Alat';
     protected static ?int $navigationSort = 0;
 
