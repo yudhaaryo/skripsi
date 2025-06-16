@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Filament\Admin\Pages;
 use App\Filament\Resources\PeminjamanResource\Widgets\TerlambatKembaliWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Widgets\AccountWidget;
