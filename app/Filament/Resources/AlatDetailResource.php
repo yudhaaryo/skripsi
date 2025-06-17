@@ -14,7 +14,7 @@ use Filament\Forms\Components\{
     Select,
     TextInput,
 };
-use Filament\Forms\Components\TextArea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 
 class AlatDetailResource extends Resource
