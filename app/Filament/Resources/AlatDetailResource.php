@@ -51,6 +51,7 @@ class AlatDetailResource extends Resource
                     $usedUnits = \App\Models\AlatDetail::where('alat_id', $alatId)
                         ->pluck('no_unit')
                         ->map(fn($v) => (int) $v)
+                        
                         ->toArray();
 
                     $available = [];
@@ -62,6 +63,7 @@ class AlatDetailResource extends Resource
                     return $available;
                 })
                 ->required()
+                ->searchable()
                 ->reactive(),
 
             TextInput::make('tahun_alat')
@@ -82,7 +84,8 @@ class AlatDetailResource extends Resource
                 })
                 ->disabled()
                 ->dehydrated(false) 
-                ->hint('Kode otomatis dari master'),
+                ->hint('Kode otomatis dari master')
+                ->searchable(),
 
             Select::make('kondisi_alat')
                 ->label('Kondisi Alat')
@@ -92,6 +95,7 @@ class AlatDetailResource extends Resource
                     'Rusak Berat' => 'Rusak Berat',
                     'Hilang' => 'Hilang',
                 ])
+                ->searchable()
                 ->required(),
 
                 
