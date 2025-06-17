@@ -135,8 +135,8 @@ class AlatResource extends Resource
                 ]),
             ])
             ->headerActions([
-                ExportAction::make()
-                    ->exporter(AlatExporter::class),
+                // ExportAction::make()
+                //     ->exporter(AlatExporter::class),
             ]);
     }
 

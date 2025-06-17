@@ -82,15 +82,15 @@ TextColumn::make('kondisi_pengembalian')
         ])
         ->bulkActions([
             BulkActionGroup::make([
-                ExportBulkAction::make()
-                    ->exporter(PengembalianExporter::class),
+                // ExportBulkAction::make()
+                //     ->exporter(PengembalianExporter::class),
                 DeleteBulkAction::make(),
             ]),
         ])
         ->headerActions([
-            ExportAction::make()
-                ->exporter(PengembalianExporter::class)
-                ,
+            // ExportAction::make()
+            //     ->exporter(PengembalianExporter::class)
+            //     ,
         ]);
 }
 
