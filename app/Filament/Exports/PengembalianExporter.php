@@ -14,6 +14,14 @@ class PengembalianExporter extends Exporter
     {
         return $record->load(['peminjaman.alatDetails.alat', 'peminjaman.user']);
     }
+    public static function getDefaultDisk(): ?string
+    {
+        return 'public';
+    }
+    public static function getDefaultDirectory(): ?string
+    {
+        return 'exports';
+    }
 
     public static function getColumns(): array
     {
