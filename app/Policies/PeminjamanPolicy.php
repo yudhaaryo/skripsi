@@ -105,4 +105,32 @@ class PeminjamanPolicy
     {
         return $user->can('reorder_peminjaman');
     }
+        /**
+     * Aksi untuk menyetujui peminjaman.
+     */
+    public function setujui(User $user, Peminjaman $peminjaman): bool
+    {
+        return $user->hasAnyRole(['super_admin','admin', 'guru'])
+            && $peminjaman->status_pinjam === 'menunggu'
+            && !empty($peminjaman->file_surat);
+    }
+
+    /**
+     * Aksi untuk menolak peminjaman.
+     */
+    public function tolak(User $user, Peminjaman $peminjaman): bool
+    {
+        return $user->hasAnyRole(['super_admin','admin', 'guru'])
+            && $peminjaman->status_pinjam === 'menunggu';
+    }
+
+    /**
+     * Aksi untuk mengembalikan peminjaman.
+     */
+    public function kembalikan(User $user, Peminjaman $peminjaman): bool
+    {
+        return $user->hasAnyRole(['super_admin','admin', 'guru'])
+            && $peminjaman->status_pinjam === 'dipinjam';
+    }
+
 }

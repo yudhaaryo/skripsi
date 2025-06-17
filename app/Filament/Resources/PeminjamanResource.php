@@ -10,10 +10,18 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Forms\Components\{
-    Select, DatePicker, TextInput, FileUpload, Repeater, Hidden
+    Select,
+    DatePicker,
+    TextInput,
+    FileUpload,
+    Repeater,
+    Hidden
 };
 use Filament\Tables\Actions\{
-    Action, DeleteAction, EditAction, DeleteBulkAction
+    Action,
+    DeleteAction,
+    EditAction,
+    DeleteBulkAction
 };
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
@@ -31,9 +39,9 @@ class PeminjamanResource extends Resource
 
 
     public static function form(Form $form): Form
-{
-    return $form->schema([
-        Auth::user()?->hasRole('admin')
+    {
+        return $form->schema([
+            Auth::user()?->hasRole('admin')
             ? Select::make('user_id')
                 ->label('Peminjam')
                 ->relationship('user', 'name')
@@ -41,70 +49,70 @@ class PeminjamanResource extends Resource
                 ->required()
             : Hidden::make('user_id')->default(auth()->id()),
 
-        TextInput::make('kelas_peminjam')->required(),
-        TextInput::make('nis_peminjam')->required(),
-        DatePicker::make('tanggal_pinjam')->required(),
-        DatePicker::make('tanggal_kembali')->required(),
+            TextInput::make('kelas_peminjam')->required(),
+            TextInput::make('nis_peminjam')->required(),
+            DatePicker::make('tanggal_pinjam')->required(),
+            DatePicker::make('tanggal_kembali')->required(),
 
-        TextInput::make('keperluan')
-            ->label('Keperluan Peminjaman')
-            ->required(),
+            TextInput::make('keperluan')
+                ->label('Keperluan Peminjaman')
+                ->required(),
 
-        Select::make('status_pinjam')
-            ->options([
-                'menunggu' => 'Menunggu',
-                'dipinjam' => 'Dipinjam',
-                'dikembalikan' => 'Dikembalikan',
-                'ditolak' => 'Ditolak',
-            ])
-            ->default('menunggu')
-            ->disabled(fn () => auth()->user()?->hasRole('siswa'))
-            ->required(),
+            Select::make('status_pinjam')
+                ->options([
+                    'menunggu' => 'Menunggu',
+                    'dipinjam' => 'Dipinjam',
+                    'dikembalikan' => 'Dikembalikan',
+                    'ditolak' => 'Ditolak',
+                ])
+                ->default('menunggu')
+                ->disabled(fn() => auth()->user()?->hasRole('siswa'))
+                ->required(),
 
-        Repeater::make('alats')
-            ->label('Pilih Unit Alat')
-            ->schema([
-                Select::make('alat_detail_id')
-                    ->label('Unit Alat')
-                    ->options(
-                        AlatDetail::whereDoesntHave('peminjamans', function ($q) {
-                            $q->where('status_pinjam', 'dipinjam');
+            Repeater::make('alats')
+                ->label('Pilih Unit Alat')
+                ->schema([
+                    Select::make('alat_detail_id')
+                        ->label('Unit Alat')
+                        ->options(
+                            AlatDetail::whereDoesntHave('peminjamans', function ($q) {
+                                $q->where('status_pinjam', 'dipinjam');
+                            })
+                                ->with('alat')
+                                ->get()
+                                ->mapWithKeys(function ($detail) {
+                                    return [
+                                        $detail->id => $detail->alat->nama_alat . ' - Unit ' . $detail->no_unit . ' (Kondisi: ' . $detail->kondisi_alat . ')'
+                                    ];
+                                })
+                        )
+                        ->searchable()
+                        ->required(),
+
+                    TextInput::make('kondisi_saat_pinjam')
+                        ->label('Kondisi Saat Dipinjam')
+                        ->default(function (callable $get) {
+                            $id = $get('alat_detail_id');
+                            $unit = $id ? AlatDetail::find($id) : null;
+                            return $unit?->kondisi_alat ?? '';
                         })
-                        ->with('alat')
-                        ->get()
-                        ->mapWithKeys(function ($detail) {
-                            return [
-                                $detail->id => $detail->alat->nama_alat . ' - Unit ' . $detail->no_unit . ' (Kondisi: ' . $detail->kondisi_alat . ')'
-                            ];
-                        })
-                    )
-                    ->searchable()
-                    ->required(),
+                        ->required(),
 
-                TextInput::make('kondisi_saat_pinjam')
-                    ->label('Kondisi Saat Dipinjam')
-                    ->default(function (callable $get) {
-                        $id = $get('alat_detail_id');
-                        $unit = $id ? AlatDetail::find($id) : null;
-                        return $unit?->kondisi_alat ?? '';
-                    })
-                    ->required(),
+                    TextInput::make('keterangan')
+                        ->label('Keterangan')
+                        ->nullable(),
+                ])
+                ->columns(2)
+                ->minItems(1)
+                ->required(),
 
-                TextInput::make('keterangan')
-                    ->label('Keterangan')
-                    ->nullable(),
-            ])
-            ->columns(2)
-            ->minItems(1)
-            ->required(),
-
-        FileUpload::make('file_surat')
-            ->label('Unggah Surat')
-            ->directory('surat-peminjaman')
-            ->acceptedFileTypes(['application/pdf', 'image/*'])
-            ->visible(fn () => Auth::user()?->hasRole('siswa', 'guru')),
-    ]);
-}
+            FileUpload::make('file_surat')
+                ->label('Unggah Surat')
+                ->directory('surat-peminjaman')
+                ->acceptedFileTypes(['application/pdf', 'image/*'])
+                ->visible(fn() => Auth::user()?->hasRole('siswa', 'guru')),
+        ]);
+    }
 
 
     public static function table(Table $table): Table
@@ -125,7 +133,7 @@ class PeminjamanResource extends Resource
                 TextColumn::make('tanggal_pinjam'),
                 TextColumn::make('tanggal_kembali'),
 
-                 TextColumn::make('alatDetails')
+                TextColumn::make('alatDetails')
                     ->label('Unit Alat Dipinjam')
                     ->formatStateUsing(function ($record) {
                         return $record->alatDetails->map(function ($detail) {
@@ -151,36 +159,41 @@ class PeminjamanResource extends Resource
 
                 TextColumn::make('file_surat')
                     ->label('Surat')
-                    ->formatStateUsing(fn ($state) => $state ? '📄 Lihat Surat' : '-')
-                    ->url(fn ($record) => $record->file_surat ? \Storage::url($record->file_surat) : null),
+                    ->formatStateUsing(fn($state) => $state ? '📄 Lihat Surat' : '-')
+                    ->url(fn($record) => $record->file_surat ? \Storage::url($record->file_surat) : null),
             ])
             ->filters([
                 Filter::make('terlambat')
                     ->label('Terlambat Mengembalikan')
-                    ->query(fn ($query) => $query
-                        ->where('status_pinjam', 'dipinjam')
-                        ->whereDate('tanggal_kembali', '<', now())
+                    ->query(
+                        fn($query) => $query
+                            ->where('status_pinjam', 'dipinjam')
+                            ->whereDate('tanggal_kembali', '<', now())
                     ),
                 Filter::make('menunggu')
                     ->label('Menunggu Persetujuan')
-                    ->query(fn ($query) => $query
-                        ->where('status_pinjam', 'menunggu')
+                    ->query(
+                        fn($query) => $query
+                            ->where('status_pinjam', 'menunggu')
                     ),
                 Filter::make('dipinjam')
                     ->label('Sedang Dipinjam')
-                    ->query(fn ($query) => $query
-                        ->where('status_pinjam', 'dipinjam')
-                        ->whereDate('tanggal_kembali', '>=', now())
+                    ->query(
+                        fn($query) => $query
+                            ->where('status_pinjam', 'dipinjam')
+                            ->whereDate('tanggal_kembali', '>=', now())
                     ),
                 Filter::make('dikembalikan')
                     ->label('Sudah Dikembalikan')
-                    ->query(fn ($query) => $query
-                        ->where('status_pinjam', 'dikembalikan')
+                    ->query(
+                        fn($query) => $query
+                            ->where('status_pinjam', 'dikembalikan')
                     ),
                 Filter::make('ditolak')
                     ->label('Ditolak')
-                    ->query(fn ($query) => $query
-                        ->where('status_pinjam', 'ditolak')
+                    ->query(
+                        fn($query) => $query
+                            ->where('status_pinjam', 'ditolak')
                     ),
             ])
             ->actions([
@@ -188,45 +201,39 @@ class PeminjamanResource extends Resource
                     ->label('Setujui')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn ($record) =>
-                        auth()->user()->hasAnyRole(['admin', 'guru']) &&
-                        $record->status_pinjam === 'menunggu' &&
-                        $record->file_surat !== null
-                    )
+                    ->visible(fn($record) => auth()->user()?->can('setujui', $record))
                     ->requiresConfirmation()
                     ->action(function (Peminjaman $record) {
                         $record->update(['status_pinjam' => 'dipinjam']);
-                        // Tidak perlu decrement stok di master, karena sudah per unit
                     }),
 
                 Action::make('tolak')
                     ->label('Tolak')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn ($record) =>
-                        auth()->user()->hasAnyRole(['admin', 'guru']) &&
-                        $record->status_pinjam === 'menunggu'
-                    )
+                    ->visible(fn($record) => auth()->user()?->can('tolak', $record))
                     ->requiresConfirmation()
-                    ->action(fn ($record) => $record->update(['status_pinjam' => 'ditolak'])),
+                    ->action(fn($record) => $record->update(['status_pinjam' => 'ditolak'])),
 
                 Action::make('cetak_surat')
                     ->label('Cetak Surat')
                     ->icon('heroicon-o-printer')
                     ->color('info')
-                    ->visible(fn ($record) =>
+                    ->visible(
+                        fn($record) =>
                         $record->status_pinjam === 'menunggu' &&
                         $record->user_id === auth()->user()->id
                     )
                     ->requiresConfirmation()
-                    ->action(fn (Peminjaman $record) => redirect()->route('peminjaman.surat', ['id' => $record->id])),
+                    ->action(fn(Peminjaman $record) => redirect()->route('peminjaman.surat', ['id' => $record->id])),
 
                 Action::make('upload_surat')
                     ->label('Upload Surat')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('gray')
-                    ->visible(fn ($record) =>
-    $record->status_pinjam === 'menunggu'
+                    ->visible(
+                        fn($record) =>
+                        $record->status_pinjam === 'menunggu'
                     )
 
                     ->form([
@@ -250,11 +257,8 @@ class PeminjamanResource extends Resource
                     ->label('Kembalikan')
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->color('success')
-                    ->visible(fn ($record) =>
-                        auth()->user()->hasAnyRole(['admin', 'guru']) &&
-                        $record->status_pinjam === 'dipinjam'
-                    )
-                    ->form(fn (Peminjaman $record) => [
+                    ->visible(fn($record) => auth()->user()?->can('kembalikan', $record))
+                    ->form(fn(Peminjaman $record) => [
                         DatePicker::make('tanggal_pengembalian')
                             ->label('Tanggal Pengembalian')
                             ->required()
@@ -266,7 +270,7 @@ class PeminjamanResource extends Resource
                                 Select::make('alat_detail_id')
                                     ->label('Unit Alat')
                                     ->options($record->alatDetails->mapWithKeys(
-                                        fn ($detail) => [
+                                        fn($detail) => [
                                             $detail->id => $detail->alat->nama_alat
                                                 . ' - Unit ' . $detail->no_unit
                                                 . ' (' . $detail->kode_alat . ')'
@@ -280,7 +284,7 @@ class PeminjamanResource extends Resource
                                     ->required(),
                             ])
                             ->default(
-                                $record->alatDetails->map(fn ($detail) => [
+                                $record->alatDetails->map(fn($detail) => [
                                     'alat_detail_id' => $detail->id,
                                     'kondisi' => '',
                                 ])->toArray()
@@ -295,12 +299,12 @@ class PeminjamanResource extends Resource
                             'kondisi_pengembalian' => 'Tercatat per alat',
                         ]);
                         Notification::make()
-                        ->title('Berhasil')
-                        ->body('Pengembalian unit alat berhasil dicatat.')
-                        ->success()
-                        ->send();
+                            ->title('Berhasil')
+                            ->body('Pengembalian unit alat berhasil dicatat.')
+                            ->success()
+                            ->send();
                         // Tambahkan logic pengembalian detail ke pivot atau model lain jika perlu
-
+            
                         foreach ($data['kondisi_alat'] as $item) {
                             // update kondisi di pivot peminjaman_alat_detail
                             $record->alatDetails()->updateExistingPivot($item['alat_detail_id'], [
@@ -316,12 +320,14 @@ class PeminjamanResource extends Resource
                     }),
 
                 EditAction::make()
-                    ->visible(fn ($record) =>
+                    ->visible(
+                        fn($record) =>
                         $record->user_id === Auth::id()
                     ),
 
                 DeleteAction::make()
-                    ->visible(fn ($record) =>
+                    ->visible(
+                        fn($record) =>
                         $record->user_id === Auth::id()
                     ),
             ])
@@ -342,6 +348,6 @@ class PeminjamanResource extends Resource
             'edit' => Pages\EditPeminjaman::route('/{record}/edit'),
         ];
     }
- 
+
 
 }
