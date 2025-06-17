@@ -231,6 +231,8 @@ class PeminjamanResource extends Resource
                     ->label('Upload Surat')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('gray')
+                            ->maxSize(10240) 
+
                     ->visible(
                         fn($record) =>
                         $record->status_pinjam === 'menunggu'
