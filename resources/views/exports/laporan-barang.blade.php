@@ -41,7 +41,7 @@
                 <td>{{ $barang['tambah'] }}</td>
                 <td>{{ $barang['digunakan'] }}</td>
                 <td>{{ $barang['saldo_akhir'] }}</td>
-                <td>{{ number_format($barang['jumlah_rupiah'], 0, ',', '.') }}</td>
+                <td>{{ $barang['jumlah_rupiah'] }}</td>
             </tr>
         @endforeach
 
