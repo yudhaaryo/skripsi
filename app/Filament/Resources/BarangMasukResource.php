@@ -30,8 +30,8 @@ class BarangMasukResource extends Resource
                 ->label('Pilih Barang')
                 ->relationship('barang', 'nama_barang_aplikasi')
                 ->createOptionForm([
-                    TextInput::make('nama_barang_aplikasi')->label('Nama di Aplikasi')->required(),
                     TextInput::make('nama_barang_asli')->label('Nama Asli')->required(),
+                    TextInput::make('nama_barang_aplikasi')->label('Nama di Aplikasi')->required(),
                     TextInput::make('kode_barang')->label('Kode')->required(),
                     TextInput::make('satuan')->required(),
                     TextInput::make('harga_beli')->label('Harga Beli')->numeric(),
@@ -64,7 +64,7 @@ class BarangMasukResource extends Resource
             ->columns([
                 TextColumn::make('barang.nama_barang_aplikasi')->label('Nama Barang')->searchable(),
                 TextColumn::make('jumlah_masuk')->label('Jumlah Masuk'),
-                TextColumn::make('tanggal_masuk')->label('Tanggal Masuk')->date(),
+                TextColumn::make('tanggal_masuk')->label('Tanggal Masuk')->date() ->searchable() ,
                 TextColumn::make('created_at')->label('Dibuat')->since(),
             ])
             ->filters([
