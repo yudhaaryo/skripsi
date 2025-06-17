@@ -23,35 +23,38 @@ class BarangMasukResource extends Resource
     protected static ?int $navigationSort = 1;
 
 
-   public static function form(Form $form): Form
+  public static function form(Form $form): Form
 {
     return $form->schema([
         Select::make('barang_id')
             ->label('Pilih Barang / Tambah Barang Baru')
             ->relationship('barang', 'nama_barang_aplikasi')
             ->createOptionForm([
-                
-                TextInput::make('nama_barang_asli')->required(),
-                TextInput::make('nama_barang_aplikasi')->required(),
-                TextInput::make('kode_barang')->required(),
+                TextInput::make('nama_barang_asli')->label('Nama Asli')->required(),
+                TextInput::make('nama_barang_aplikasi')->label('Nama di Aplikasi')->required(),
+                TextInput::make('kode_barang')->label('Kode')->required(),
                 TextInput::make('satuan')->required(),
-                TextInput::make('harga_beli')->numeric()->required(),
-                DatePicker::make('tanggal_masuk')->default(now())->required(),
-                TextInput::make('jumlah_awal')->numeric()->required(),
+                TextInput::make('harga_beli')->label('Harga Beli')->numeric(),
+                DatePicker::make('tanggal_masuk')->label('Tanggal Masuk')->required()->default(now()),
+                TextInput::make('jumlah_awal')->label('Jumlah Awal')->numeric()->required(),
             ])
             ->searchable()
             ->required(),
 
-        
+        // Ini hanya di form utama, tidak ikut modal create
         TextInput::make('jumlah_masuk')
             ->label('Jumlah Masuk')
             ->numeric()
             ->required()
-            ->visible(fn($get) => $get('barang_id')), 
+            ->visible(fn ($livewire) => !method_exists($livewire, 'getCreateOptionForm') && !method_exists($livewire, 'mountCreateOptionForm')),
 
-        DatePicker::make('tanggal_masuk')->default(now())->required(),
+        DatePicker::make('tanggal_masuk')
+            ->label('Tanggal Masuk')
+            ->required()
+            ->default(now()),
     ]);
 }
+
 
 
     public static function table(Table $table): Table
