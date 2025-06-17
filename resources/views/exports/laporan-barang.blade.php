@@ -34,7 +34,7 @@
                 <td>{{ $barang['kode_barang'] }}</td>
                 <td>{{ $barang['nama_asli'] }}</td>
                 <td>{{ $barang['nama_aplikasi'] }}</td>
-                <td>{{ number_format($barang['harga_beli'], 0, ',', '.') }}</td>
+                <td>'{{ number_format($barang['harga_beli'], 0, ',', '.') }}'</td>
                 <td>{{ $barang['jumlah_awal'] }}</td>
                 <td>{{ $barang['saldo_awal'] }}</td>
                 <td>{{ $barang['satuan'] }}</td>
