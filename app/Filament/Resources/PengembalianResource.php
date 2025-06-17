@@ -90,7 +90,7 @@ TextColumn::make('kondisi_pengembalian')
         ->headerActions([
             ExportAction::make()
                 ->exporter(PengembalianExporter::class)
-                ->disk('public'),
+                ,
         ]);
 }
 
