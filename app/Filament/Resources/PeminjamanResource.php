@@ -226,9 +226,9 @@ class PeminjamanResource extends Resource
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('gray')
                     ->visible(fn ($record) =>
-                        auth()->user()->hasAnyRole(['siswa', 'guru', 'admin']) &&
-                        $record->status_pinjam === 'menunggu' &&
-                        $record->user_id === auth()->user()->id
+    $record->status_pinjam === 'menunggu'
+)
+
                     )
                     ->form([
                         FileUpload::make('file_surat')
