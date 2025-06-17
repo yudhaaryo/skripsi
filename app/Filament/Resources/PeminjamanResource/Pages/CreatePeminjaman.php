@@ -12,11 +12,7 @@ class CreatePeminjaman extends CreateRecord
 
     protected array $alatPivotData = [];
 
-    public static function canAccess(array $parameters = []): bool
-    {
-        $user = Auth::user();
-        return $user?->hasAnyRole(['admin', 'guru', 'siswa']);
-    }
+
 
     protected function mutateFormDataBeforeCreate(array $data): array
 {
