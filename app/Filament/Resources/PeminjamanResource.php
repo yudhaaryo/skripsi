@@ -227,9 +227,8 @@ class PeminjamanResource extends Resource
                     ->color('gray')
                     ->visible(fn ($record) =>
     $record->status_pinjam === 'menunggu'
-)
-
                     )
+
                     ->form([
                         FileUpload::make('file_surat')
                             ->label('Unggah Surat Bertandatangan')
