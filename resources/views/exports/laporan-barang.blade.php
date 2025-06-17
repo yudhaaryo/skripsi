@@ -47,14 +47,9 @@
 
         <!-- FOOTER TOTAL -->
         <tr style="font-weight: bold; background: #f3f4f6;">
-            <td colspan="5" align="center">TOTAL</td>
-            <td>{{ $barangs->sum('jumlah_awal') }}</td>
-            <td>{{ $barangs->sum('saldo_awal') }}</td>
-            <td>-</td>
-            <td>{{ $barangs->sum('tambah') }}</td>
-            <td>{{ $barangs->sum('digunakan') }}</td>
-            <td>{{ $barangs->sum('saldo_akhir') }}</td>
-            <td>{{ number_format($barangs->sum('jumlah_rupiah'), 0, ',', '.') }}</td>
-        </tr>
+    <td colspan="11" align="center">TOTAL</td>
+    <td>{{ number_format($barangs->sum('jumlah_rupiah'), 0, ',', '.') }}</td>
+</tr>
+
     </tbody>
 </table>
