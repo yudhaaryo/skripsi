@@ -27,7 +27,7 @@ class BarangMasukResource extends Resource
     {
         return $form->schema([
             Select::make('barang_id')
-                ->label('Pilih Barang')
+                ->label('Pilih Barang / Tambah Barang Baru')
                 ->relationship('barang', 'nama_barang_aplikasi')
                 ->createOptionForm([
                     TextInput::make('nama_barang_asli')->label('Nama Asli')->required(),
