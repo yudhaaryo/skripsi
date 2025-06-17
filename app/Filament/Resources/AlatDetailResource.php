@@ -94,7 +94,10 @@ class AlatDetailResource extends Resource
                 ])
                 ->required(),
 
-                
+                TextArea::make('keterangan')
+                ->label('Keterangan')
+                ->rows(2)
+                ->nullable(),
             TextArea::make('keterangan')
                 ->label('Keterangan')
                 ->rows(2)
