@@ -14,9 +14,7 @@ use Filament\Forms\Components\{
     Select,
     TextInput,
 };
-use Filament\Forms\Components\TextArea
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextArea;
 use Filament\Tables\Columns\TextColumn;
 
 class AlatDetailResource extends Resource
@@ -83,7 +81,7 @@ class AlatDetailResource extends Resource
                     return $alat->kode_alat;
                 })
                 ->disabled()
-                ->dehydrated(false) // tidak dikirim, harus generate ulang di Page
+                ->dehydrated(false) 
                 ->hint('Kode otomatis dari master'),
 
             Select::make('kondisi_alat')
