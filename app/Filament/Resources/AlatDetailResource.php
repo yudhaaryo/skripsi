@@ -63,7 +63,7 @@ class AlatDetailResource extends Resource
                     return $available;
                 })
                 ->required()
-                ->searchable()
+                
                 ->reactive(),
 
             TextInput::make('tahun_alat')
@@ -85,7 +85,7 @@ class AlatDetailResource extends Resource
                 ->disabled()
                 ->dehydrated(false) 
                 ->hint('Kode otomatis dari master')
-                ->searchable(),
+                ,
 
             Select::make('kondisi_alat')
                 ->label('Kondisi Alat')
@@ -95,7 +95,7 @@ class AlatDetailResource extends Resource
                     'Rusak Berat' => 'Rusak Berat',
                     'Hilang' => 'Hilang',
                 ])
-                ->searchable()
+                
                 ->required(),
 
                 
@@ -115,11 +115,11 @@ class AlatDetailResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('alat.nama_alat')->label('Nama Alat Induk'),
-                TextColumn::make('no_unit')->label('No. Unit'),
-                TextColumn::make('kode_alat')->label('Kode Unit'),
-                TextColumn::make('tahun_alat')->label('Tahun'),
-                TextColumn::make('kondisi_alat')->label('Kondisi'),
+                TextColumn::make('alat.nama_alat')->label('Nama Alat Induk')->searchable(),
+                TextColumn::make('no_unit')->label('No. Unit')->searchable(),
+                TextColumn::make('kode_alat')->label('Kode Unit')->searchable(),
+                TextColumn::make('tahun_alat')->label('Tahun')->searchable(),
+                TextColumn::make('kondisi_alat')->label('Kondisi')->searchable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->getStateUsing(function ($record) {
