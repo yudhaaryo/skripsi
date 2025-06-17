@@ -241,6 +241,7 @@ class PeminjamanResource extends Resource
                             ->label('Unggah Surat Bertandatangan')
                             ->directory('surat-peminjaman')
                             ->acceptedFileTypes(['application/pdf', 'image/*'])
+                            ->maxSize(10240) 
                             ->required()
                     ])
                     ->action(function (array $data, Peminjaman $record) {
