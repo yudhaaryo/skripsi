@@ -56,7 +56,7 @@
                 digital, cepat, akurat.</p>
             <a href="/admin"
                 class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition transform hover:scale-105 duration-300 shadow-lg mt-6">Masuk
-                Admin</a>
+            </a>
         </div>
 
         <div class="md:w-1/2 mt-10 md:mt-0 flex justify-center" data-aos="fade-left" data-aos-duration="1000">

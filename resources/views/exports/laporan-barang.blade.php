@@ -21,7 +21,7 @@
             <th rowspan="2">Jumlah (Rp)</th>
         </tr>
         <tr>
-            <th>-</th>
+            <th>Saldo awal bulan {{ $bulan }}</th>
             <th>Satuan</th>
             <th>Tambah</th>
             <th>Digunakan</th>
