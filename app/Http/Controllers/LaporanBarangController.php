@@ -14,7 +14,11 @@ class LaporanBarangController extends Controller
 {
     public function export(Request $request)
     {
-        $bulan = $request->input('bulan'); // format 'Y-m' 
+        $bulan = $request->input('bulan'); // format 'Y-m'
+        if (!$bulan) {
+            abort(400, 'Parameter bulan wajib diisi.');
+        }
+
         $carbonBulan = Carbon::createFromFormat('Y-m', $bulan);
         $month = $carbonBulan->month;
         $year = $carbonBulan->year;
@@ -64,17 +68,29 @@ class LaporanBarangController extends Controller
             ];
         });
 
-        // Filter, jika ingin menampilkan hanya yang dipakai
+        // Filter, jika ingin menampilkan hanya yang dipakai atau habis
         $filter = $request->input('filter_penggunaan', 'semua');
         if ($filter === 'digunakan') {
             $barangs = $barangs->filter(fn($b) => $b['digunakan'] > 0);
+        }
+        if ($filter === 'mutasi') {
+    $barangs = $barangs->filter(fn($b) => $b['tambah'] != 0 || $b['digunakan'] != 0);
+}
+        if ($filter === 'habis') {
+            // Tampilkan hanya barang yang saldo akhirnya 0
+            $barangs = $barangs->filter(fn($b) => $b['saldo_akhir'] == 0);
+        }
+
+        // Jika tahun/bulan sebelum ada data, tetap akan kosong (tidak error)
+        if ($barangs->count() === 0) {
+            // Jika ingin, bisa kirim view kosong atau handle sesuai kebutuhan
         }
 
         // Export Excel dengan data laporan dan judul bulan
         return Excel::download(
             new LaporanBarangHabisExport(
                 $barangs,
-                'Nama Program', // Atau isi dari input jika ada
+                'Nama Program', // Bisa diganti sesuai input
                 $carbonBulan->translatedFormat('F Y')
             ),
             'laporan_barang_' . $carbonBulan->format('Y_m') . '.xlsx'

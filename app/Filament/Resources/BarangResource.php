@@ -8,13 +8,15 @@ use App\Models\Barang;
 use Filament\Forms\Form;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ExportAction;
-use Filament\Form\Components\Select;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Carbon\Carbon;
@@ -27,7 +29,7 @@ class BarangResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationLabel = 'Barang';
     protected static ?string $navigationGroup = 'Inventaris Barang';
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 1;
 
     public static function canCreate(): bool
     {
@@ -72,7 +74,18 @@ class BarangResource extends Resource
                     ->date('d M Y'),
 
             ])
-            ->filters([])
+            ->filters([
+                 Filter::make('stok_habis')
+                ->label('Stok Habis (0)')
+                ->query(function ($query) {
+                    $query->whereRaw('
+                        (jumlah_awal + 
+                            (SELECT IFNULL(SUM(jumlah_masuk),0) FROM barang_masuks WHERE barang_masuks.barang_id = barangs.id) - 
+                            (SELECT IFNULL(SUM(jumlah_keluar),0) FROM barang_keluars WHERE barang_keluars.barang_id = barangs.id)
+                        ) = 0
+                    ');
+                }),
+        ])
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
@@ -109,6 +122,9 @@ class BarangResource extends Resource
             ->options([
                 'semua' => 'Tampilkan Semua Barang',
                 'digunakan' => 'Hanya Barang yang Digunakan Bulan Ini',
+                'mutasi' =>'Hanya Barang yang Ada Mutasi Bulan Ini',
+                'habis' => 'Hanya Barang yang stok habis',
+
             ])
             ->default('semua')
             ->required(),

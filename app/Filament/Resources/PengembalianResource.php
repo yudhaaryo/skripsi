@@ -32,67 +32,66 @@ class PengembalianResource extends Resource
 
 
     public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
+    {
+        return $form
+            ->schema([
 
-        ]);
-}
+            ]);
+    }
 
 
     public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            TextColumn::make('id')->label('ID'),
+    {
+        return $table
+            ->columns([
+                TextColumn::make('id')->label('ID'),
 
-            TextColumn::make('peminjaman.user.name')->label('Nama Peminjam'),
+                TextColumn::make('peminjaman.user.name')->label('Nama Peminjam'),
 
-            TextColumn::make('peminjaman.tanggal_pinjam')->label('Tanggal Peminjaman'),
+                TextColumn::make('peminjaman.tanggal_pinjam')->label('Tanggal Peminjaman'),
 
-            TextColumn::make('tanggal_pengembalian')->label('Tanggal Pengembalian'),
+                TextColumn::make('tanggal_pengembalian')->label('Tanggal Pengembalian'),
 
-            TextColumn::make('peminjaman.alatDetails')
-    ->label('Nama Alat')
-    ->formatStateUsing(function ($state, $record) {
-        return $record->peminjaman->alatDetails->map(function ($detail) {
-            return $detail->alat->nama_alat ?? '-' . ' - Unit ' . $detail->no_unit;
-        })->implode(', ');
-    })
-    ->wrap(),
+                TextColumn::make('peminjaman.alatDetails')
+                    ->label('Nama Alat')
+                    ->formatStateUsing(function ($state, $record) {
+                        return $record->peminjaman->alatDetails->map(function ($detail) {
+                            return $detail->alat->nama_alat ?? '-' . ' - Unit ' . $detail->no_unit;
+                        })->implode(', ');
+                    })
+                    ->wrap(),
 
-TextColumn::make('kondisi_pengembalian')
-    ->label('Kondisi Pengembalian')
-    ->formatStateUsing(function ($state, $record) {
-        return $record->peminjaman->alatDetails->map(function ($detail) {
-            // Ambil dari pivot, misal kondisi_saat_kembali
-            $namaAlat = $detail->alat->nama_alat ?? '-';
-            $unit = $detail->no_unit ?? '-';
-            $kondisi = $detail->pivot->kondisi_saat_kembali ?? '-';
-            return "{$namaAlat} (Unit {$unit}) [{$kondisi}]";
-        })->implode(', ');
-    })
-    ->wrap(),
+                TextColumn::make('kondisi_pengembalian')
+                    ->label('Kondisi Pengembalian')
+                    ->formatStateUsing(function ($state, $record) {
+                        return $record->peminjaman->alatDetails->map(function ($detail) {
+                            $namaAlat = $detail->alat->nama_alat ?? '-';
+                            $unit = $detail->no_unit ?? '-';
+                            $kondisi = $detail->pivot->kondisi_saat_kembali ?? '-';
+                            return "{$namaAlat} (Unit {$unit}) [{$kondisi}]";
+                        })->implode(', ');
+                    })
+                    ->wrap(),
 
-        ])
-        ->actions([
-            EditAction::make(),
-            DeleteAction::make(),
-            ViewAction::make(),
-        ])
-        ->bulkActions([
-            BulkActionGroup::make([
-                // ExportBulkAction::make()
-                //     ->exporter(PengembalianExporter::class),
-                DeleteBulkAction::make(),
-            ]),
-        ])
-        ->headerActions([
-            // ExportAction::make()
-            //     ->exporter(PengembalianExporter::class)
-            //     ,
-        ]);
-}
+            ])
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+                ViewAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    // ExportBulkAction::make()
+                    //     ->exporter(PengembalianExporter::class),
+                    DeleteBulkAction::make(),
+                ]),
+            ])
+            ->headerActions([
+                // ExportAction::make()
+                //     ->exporter(PengembalianExporter::class)
+                //     ,
+            ]);
+    }
 
 
 

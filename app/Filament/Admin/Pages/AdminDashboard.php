@@ -11,7 +11,7 @@ use App\Filament\Widgets\StatWidget;
 
 class AdminDashboard extends BaseDashboard
 {
-    public static ?string $title = 'Dashboard Admin';
+    public static ?string $title = 'Dashboard';
 
     public function getHeaderWidgets(): array
     {

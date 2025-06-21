@@ -69,7 +69,7 @@ class UserResource extends Resource
             DeleteAction::make(),
         ])
         ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
+            
         ]);
     }
 

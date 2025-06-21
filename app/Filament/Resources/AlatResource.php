@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AlatResource\Pages;
 use App\Models\Alat;
-use App\Filament\Exports\AlatExporter;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
@@ -12,20 +11,19 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+
 use Filament\Notifications\Notification;
 
 class AlatResource extends Resource
 {
     protected static ?string $model = Alat::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-wrench';
     protected static ?string $navigationGroup = 'Peminjaman Alat';
-    protected static ?int $navigationSort = 0;
 
     public static function form(Form $form): Form
     {
@@ -35,15 +33,7 @@ class AlatResource extends Resource
                 ->required(),
 
             TextInput::make('kode_alat')
-                ->label('Kode Alat (Jenis)')
-                ->required(),
-
-            TextInput::make('jumlah_alat')
-                ->label('Jumlah Alat')
-                ->numeric()
-                ->readOnly()
-                ->helperText('Otomatis sesuai jumlah detail/unit')
-                ->default(0)
+                ->label('Kode Kategori Alat')
                 ->required(),
 
             TextInput::make('merk_alat')
@@ -56,33 +46,35 @@ class AlatResource extends Resource
                 ->nullable()
                 ->required(),
 
+           
+            TextInput::make('jumlah_alat')
+                ->label('Jumlah Alat')
+                ->numeric()
+                ->readOnly()
+                ->helperText('Otomatis sesuai jumlah detail/unit')
+                ->default(0)
+                ->dehydrated(),
 
-
+            
             Repeater::make('details')
                 ->label('Detail/Unit Alat')
                 ->relationship('details')
                 ->schema([
                     TextInput::make('no_unit')->label('No. Unit')->required(),
-                    TextInput::make('kode_alat')
-                        ->label('Kode Alat (Unit)')
-                        ->required(),
-                    TextInput::make('tahun_alat')
-                        ->label('Tahun Alat')
-                        ->numeric()
-                        ->minValue(1900)
-                        ->maxValue(now()->year + 1)
-                        ->required(),
+                    TextInput::make('tahun_alat')->label('Tahun Alat')->numeric()->minValue(2000)->maxValue(now()->year + 1)->required()->placeholder('Misal:2020'),
+                    TextInput::make('kode_alat')->label('Kode Alat')->required(),
                     Select::make('kondisi_alat')->label('Kondisi')->options([
                         'Baik' => 'Baik',
-                        'Rusak' => 'Rusak',
+                        'Rusak Ringan' => 'Rusak Ringan',
+                        'Rusak Berat' => 'Rusak Berat',
                         'Hilang' => 'Hilang',
                     ])->required(),
                     TextInput::make('keterangan')->label('Keterangan')->nullable(),
                 ])
                 ->minItems(1)
-                ->columns(2)
+                ->columnSpan(2)
+                ->helperText('Isi detail/unit yang ingin ditambahkan. Bisa lebih dari satu unit sekaligus.')
                 ->afterStateUpdated(function ($state, callable $set) {
-
                     $set('jumlah_alat', count($state ?? []));
                 }),
         ]);
@@ -93,11 +85,10 @@ class AlatResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama_alat')->label('Nama Alat')->sortable()->searchable(),
-                TextColumn::make('kode_alat')->label('Kode Alat')->sortable()->searchable(),
+                TextColumn::make('kode_alat')->label('Kode Kategori Atat')->sortable()->searchable(),
                 TextColumn::make('total_unit')
                     ->label('Total Unit')
                     ->getStateUsing(fn($record) => $record->details()->count()),
-                // Hitung unit tersedia (tidak sedang dipinjam)
                 TextColumn::make('unit_tersedia')
                     ->label('Unit Tersedia')
                     ->getStateUsing(
@@ -106,7 +97,6 @@ class AlatResource extends Resource
                             $q->where('status_pinjam', 'dipinjam');
                         })->count()
                     ),
-                // Hitung unit sedang dipinjam
                 TextColumn::make('unit_dipinjam')
                     ->label('Unit Dipinjam')
                     ->getStateUsing(
@@ -115,10 +105,6 @@ class AlatResource extends Resource
                             $q->where('status_pinjam', 'dipinjam');
                         })->count()
                     ),
-                TextColumn::make('total_unit')
-                    ->label('Total Unit')
-                    ->getStateUsing(fn($record) => $record->details()->count()),
-
                 TextColumn::make('merk_alat')->label('Merk Alat')->sortable()->searchable(),
                 TextColumn::make('sumber_dana')->label('Sumber Dana')->sortable()->searchable(),
             ])
@@ -135,8 +121,12 @@ class AlatResource extends Resource
                 ]),
             ])
             ->headerActions([
-                // ExportAction::make()
-                //     ->exporter(AlatExporter::class),
+                Action::make('create')
+                    ->label('Tambah Jenis Alat Baru')
+                    ->url(route('filament.admin.resources.alats.create')),
+                Action::make('tambah_unit')
+                    ->label('Tambah Unit Alat')
+                    ->url(route('filament.admin.resources.alats.tambah-unit')),
             ]);
     }
 
@@ -151,51 +141,21 @@ class AlatResource extends Resource
             'index' => Pages\ListAlats::route('/'),
             'create' => Pages\CreateAlat::route('/create'),
             'edit' => Pages\EditAlat::route('/{record}/edit'),
+            // Custom page untuk tambah unit:
+            'tambah-unit' => Pages\TambahUnitAlat::route('/tambah-unit'),
         ];
     }
 
-
     public static function mutateFormDataBeforeCreate(array $data): array
     {
-        $existingAlat = Alat::where('nama_alat', $data['nama_alat'])
-            ->where('kode_alat', $data['kode_alat'])
-            ->first();
-
-        if ($existingAlat) {
-
-            if (isset($data['details'])) {
-                foreach ($data['details'] as $detail) {
-                    $existingAlat->details()->create($detail);
-                }
-            }
-
-
-            $existingAlat->jumlah_alat = $existingAlat->details()->count();
-            $existingAlat->save();
-
-            Notification::make()
-                ->title('Alat Sudah Ada')
-                ->body('Jumlah alat dan detail berhasil ditambahkan ke alat yang sudah ada.')
-                ->success()
-                ->send();
-
-
-            return [];
-        }
-
-
         if (isset($data['details'])) {
             $data['jumlah_alat'] = count($data['details']);
         } else {
             $data['jumlah_alat'] = 0;
         }
-
         return $data;
     }
 
-    /**
-     * Update jumlah_alat otomatis setelah edit/simpan.
-     */
     public static function afterSave($record, $data)
     {
         $record->jumlah_alat = $record->details()->count();

@@ -35,74 +35,74 @@ class AlatDetailResource extends Resource
 {
     return $form
         ->schema([
-            Select::make('alat_id')
-                ->label('Tipe/Merk Alat')
-                ->relationship('alat', 'nama_alat')
-                ->searchable()
-                ->required()
-                ->reactive(),
+        //     Select::make('alat_id')
+        //         ->label('Tipe/Merk Alat')
+        //         ->relationship('alat', 'nama_alat')
+        //         ->searchable()
+        //         ->required()
+        //         ->reactive(),
 
-            Select::make('no_unit')
-                ->label('Nomor Unit')
-                ->options(function (callable $get) {
-                    $alatId = $get('alat_id');
-                    if (!$alatId) return [];
-                    $maxUnit = 10;
-                    $usedUnits = \App\Models\AlatDetail::where('alat_id', $alatId)
-                        ->pluck('no_unit')
-                        ->map(fn($v) => (int) $v)
+        //     Select::make('no_unit')
+        //         ->label('Nomor Unit')
+        //         ->options(function (callable $get) {
+        //             $alatId = $get('alat_id');
+        //             if (!$alatId) return [];
+        //             $maxUnit = 10;
+        //             $usedUnits = \App\Models\AlatDetail::where('alat_id', $alatId)
+        //                 ->pluck('no_unit')
+        //                 ->map(fn($v) => (int) $v)
                         
-                        ->toArray();
+        //                 ->toArray();
 
-                    $available = [];
-                    for ($i = 1; $i <= $maxUnit; $i++) {
-                        if (!in_array($i, $usedUnits)) {
-                            $available[$i] = "Unit $i";
-                        }
-                    }
-                    return $available;
-                })
-                ->required()
+        //             $available = [];
+        //             for ($i = 1; $i <= $maxUnit; $i++) {
+        //                 if (!in_array($i, $usedUnits)) {
+        //                     $available[$i] = "Unit $i";
+        //                 }
+        //             }
+        //             return $available;
+        //         })
+        //         ->required()
                 
-                ->reactive(),
+        //         ->reactive(),
 
-            TextInput::make('tahun_alat')
-                ->label('Tahun Alat')
-                ->numeric()
-                ->minValue(1980)
-                ->maxValue(date('Y'))
-                ->required(),
+        //     TextInput::make('tahun_alat')
+        //         ->label('Tahun Alat')
+        //         ->numeric()
+        //         ->minValue(1980)
+        //         ->maxValue(date('Y'))
+        //         ->required(),
 
-            TextInput::make('kode_alat')
-                ->label('Kode Inventaris')
-                ->default(function (callable $get) {
-                    $alatId = $get('alat_id');
-                    if (!$alatId) return null;
-                    $alat = \App\Models\Alat::find($alatId);
-                    if (!$alat) return null;
-                    return $alat->kode_alat;
-                })
-                ->disabled()
-                ->dehydrated(false) 
-                ->hint('Kode otomatis dari master')
-                ,
+        //     TextInput::make('kode_alat')
+        //         ->label('Kode Inventaris')
+        //         ->default(function (callable $get) {
+        //             $alatId = $get('alat_id');
+        //             if (!$alatId) return null;
+        //             $alat = \App\Models\Alat::find($alatId);
+        //             if (!$alat) return null;
+        //             return $alat->kode_alat;
+        //         })
+        //         ->disabled()
+        //         ->dehydrated(false) 
+        //         ->hint('Kode otomatis dari master')
+        //         ,
 
-            Select::make('kondisi_alat')
-                ->label('Kondisi Alat')
-                ->options([
-                    'Baik' => 'Baik',
-                    'Rusak Ringan' => 'Rusak Ringan',
-                    'Rusak Berat' => 'Rusak Berat',
-                    'Hilang' => 'Hilang',
-                ])
+        //     Select::make('kondisi_alat')
+        //         ->label('Kondisi Alat')
+        //         ->options([
+        //             'Baik' => 'Baik',
+        //             'Rusak Ringan' => 'Rusak Ringan',
+        //             'Rusak Berat' => 'Rusak Berat',
+        //             'Hilang' => 'Hilang',
+        //         ])
                 
-                ->required(),
+        //         ->required(),
 
                 
-            TextArea::make('keterangan')
-                ->label('Keterangan')
-                ->rows(2)
-                ->nullable(),
+        //     TextArea::make('keterangan')
+        //         ->label('Keterangan')
+        //         ->rows(2)
+        //         ->nullable(),
                 
         ]);
 }

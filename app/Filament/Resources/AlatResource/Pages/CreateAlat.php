@@ -9,10 +9,7 @@ class CreateAlat extends CreateRecord
 {
     protected static string $resource = AlatResource::class;
 
-    protected function getCreateButtonLabel(): string
-    {
-        return 'Tambah alat';
-    }
+    
      protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

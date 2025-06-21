@@ -39,12 +39,43 @@ class BarangKeluarResource extends Resource
                 Select::make('barang_id')
                     ->label('Nama Barang')
                     ->relationship('barang', 'nama_barang_asli')
-                    ->searchable()
+
                     ->required(),
 
                 TextInput::make('jumlah_keluar')
                     ->numeric()
-                    ->required(),
+                    ->required()
+                    ->rules([
+                        function (callable $get) {
+                            return function ($attribute, $value, $fail) use ($get) {
+                                $barangId = $get('barang_id');
+                                if (!$barangId)
+                                    return;
+                                $barang = \App\Models\Barang::find($barangId);
+                                if (!$barang)
+                                    return;
+
+                                $stok = $barang->total_barang ?? 0; // ganti sesuai accessor
+                
+                                // 1. Jika input lebih dari stok → tampilkan warning "melebihi stok"
+                                if ($value > $stok) {
+                                    $fail('Jumlah keluar melebihi stok yang tersedia! Sisa stok: ' . $stok);
+                                    return;
+                                }
+
+                                // 2. Jika stok habis (atau sudah 0, tidak bisa keluar lagi)
+                                if ($stok <= 0) {
+                                    $fail('Stok barang sudah habis, tidak bisa keluar.');
+                                    return;
+                                }
+                            };
+                        },
+                    ])
+                    ->minValue(1)
+                    ->label('Jumlah Keluar'),
+
+
+
 
                 Textarea::make('tujuan')
                     ->label('Tujuan Pengeluaran')
@@ -61,20 +92,20 @@ class BarangKeluarResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('barang.nama_barang_asli')
-                ->label('Nama Barang')
-                ->searchable(),
+                    ->label('Nama Barang')
+                    ->searchable(),
                 TextColumn::make('jumlah_keluar')
-                ->label('Jumlah Keluar')
-                ->numeric()
-                ->sortable(),
+                    ->label('Jumlah Keluar')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('tanggal_keluar')
-                ->date('d M Y')
-                ->label('Tanggal Keluar')
-                ->sortable()
-                ->searchable(),
+                    ->date('d M Y')
+                    ->label('Tanggal Keluar')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('tujuan')->limit(30)
-                ->searchable()
-                ->label('Tujuan Pengeluaran'),
+                    ->searchable()
+                    ->label('Tujuan Pengeluaran'),
             ])
             ->filters([
                 Filter::make('tanggal_keluar_range')
@@ -84,8 +115,8 @@ class BarangKeluarResource extends Resource
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['from'], fn ($q) => $q->whereDate('tanggal_keluar', '>=', $data['from']))
-                            ->when($data['until'], fn ($q) => $q->whereDate('tanggal_keluar', '<=', $data['until']));
+                            ->when($data['from'], fn($q) => $q->whereDate('tanggal_keluar', '>=', $data['from']))
+                            ->when($data['until'], fn($q) => $q->whereDate('tanggal_keluar', '<=', $data['until']));
                     }),
             ])
 

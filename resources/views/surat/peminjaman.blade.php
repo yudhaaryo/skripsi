@@ -130,13 +130,13 @@
                 NIP. 197007201998011003
             </td>
             <td>
-                KABENG / Guru Pengampu<br><br><br> <br>
+                Kabeng / Guru Pengampu<br><br><br> <br>
                 .........................................
             </td>
             <td>
                 Yogyakarta, {{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->translatedFormat('d F Y') }}<br>
                 Yang Meminjam<br><br><br>
-                .........................................
+                {{ $peminjaman->user->name ?? '-' }}
             </td>
         </tr>
     </table>

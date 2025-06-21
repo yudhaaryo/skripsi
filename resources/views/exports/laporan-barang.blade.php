@@ -45,11 +45,59 @@
             </tr>
         @endforeach
 
-        <!-- FOOTER TOTAL -->
-        <tr style="font-weight: bold; background: #f3f4f6;">
+        <!-- Total row -->
+<tr style="font-weight: bold; background: #f3f4f6;">
     <td colspan="11" align="center">TOTAL</td>
-    <td>{{ number_format($barangs->sum('jumlah_rupiah'), 0, ',', '.') }}</td>
+    <td>{{ number_format($barangs->sum('jumlah_rupiah')) }}</td>
 </tr>
-
-    </tbody>
+</tbody>
 </table>
+<br><br>
+
+
+<table style="width: 100%; border: none;">
+    <tr>
+        <td colspan="6" style="text-align: left;">
+            Mengetahui,
+        </td>
+        <td colspan="6" style="text-align: right;">
+            {{ 'Yogyakarta, ' . \Carbon\Carbon::now()->translatedFormat('d F Y') }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" style="text-align: left;">
+            KPK, TJ, dan BP
+        </td>
+        <td colspan="6" style="text-align: right;">
+            Kepala Bengkel TJ
+        </td>
+    </tr>
+    <!-- Tambah baris kosong untuk ruang ttd -->
+    <tr>
+        <td colspan="6" style="height: 60px;">&nbsp;</td>
+        <td colspan="6" style="height: 60px;">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="6" style="text-align: left;">
+            Maryuli Darmawan S.Pd., M.Eng
+        </td>
+        <td colspan="6" style="text-align: right;">
+            Agung Hari Wibowo S., ST
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" style="text-align: left;">
+            NIP. 19700720 199802 1 003
+        </td>
+        <td colspan="6" style="text-align: right;">
+            NIP. 19770424 200604 1 011
+        </td>
+    </tr>
+</table>
+
+
+
+
+
+
+

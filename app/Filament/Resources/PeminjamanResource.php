@@ -41,18 +41,17 @@ class PeminjamanResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Auth::user()?->hasRole('admin')
-            ? Select::make('user_id')
-                ->label('Peminjam')
-                ->relationship('user', 'name')
-                ->searchable()
-                ->required()
-            : Hidden::make('user_id')->default(auth()->id()),
+
 
             TextInput::make('kelas_peminjam')->required(),
             TextInput::make('nis_peminjam')->required(),
-            DatePicker::make('tanggal_pinjam')->required(),
-            DatePicker::make('tanggal_kembali')->required(),
+            DatePicker::make('tanggal_pinjam')
+                ->required()
+                ->minDate(today()), // tidak bisa memilih tanggal sebelum hari ini
+            DatePicker::make('tanggal_kembali')
+                ->required()
+                ->minDate(today()), // juga tidak bisa memilih tanggal sebelum hari ini
+
 
             TextInput::make('keperluan')
                 ->label('Keperluan Peminjaman')
@@ -67,10 +66,19 @@ class PeminjamanResource extends Resource
                 ])
                 ->default('menunggu')
                 ->disabled(fn() => auth()->user()?->hasRole('siswa'))
+                ->hidden(fn() => auth()->user()?->hasRole('siswa'))
                 ->required(),
 
-            Repeater::make('alats')
+           
+
+            FileUpload::make('file_surat')
+                ->label('Unggah Surat')
+                ->directory('surat-peminjaman')
+                ->acceptedFileTypes(['application/pdf', 'image/*'])
+                ->visible(fn() => Auth::user()?->hasRole('siswa', 'guru')),
+                 Repeater::make('alats')
                 ->label('Pilih Unit Alat')
+                ->columnSpan(2)
                 ->schema([
                     Select::make('alat_detail_id')
                         ->label('Unit Alat')
@@ -105,13 +113,8 @@ class PeminjamanResource extends Resource
                 ->columns(2)
                 ->minItems(1)
                 ->required(),
-
-            FileUpload::make('file_surat')
-                ->label('Unggah Surat')
-                ->directory('surat-peminjaman')
-                ->acceptedFileTypes(['application/pdf', 'image/*'])
-                ->visible(fn() => Auth::user()?->hasRole('siswa', 'guru')),
         ]);
+        
     }
 
 
@@ -134,7 +137,7 @@ class PeminjamanResource extends Resource
                 TextColumn::make('tanggal_kembali'),
 
                 TextColumn::make('alatDetails')
-                    ->label('Unit Alat Dipinjam')
+                    ->label('Alat Dipinjam')
                     ->formatStateUsing(function ($record) {
                         return $record->alatDetails->map(function ($detail) {
                             return
@@ -242,7 +245,7 @@ class PeminjamanResource extends Resource
                             ->label('Unggah Surat Bertandatangan')
                             ->directory('surat-peminjaman')
                             ->acceptedFileTypes(['application/pdf', 'image/*'])
-                            ->maxSize(10240) 
+                            ->maxSize(10240)
                             ->required()
                     ])
                     ->action(function (array $data, Peminjaman $record) {
@@ -292,6 +295,8 @@ class PeminjamanResource extends Resource
                                 ])->toArray()
                             )
                             ->columns(2)
+                            ->disableItemCreation()
+
                     ])
                     ->action(function (array $data, Peminjaman $record) {
                         $record->update(['status_pinjam' => 'dikembalikan']);

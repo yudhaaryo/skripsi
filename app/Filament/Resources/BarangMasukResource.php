@@ -20,7 +20,7 @@ class BarangMasukResource extends Resource
     protected static ?string $model = BarangMasuk::class;
     protected static ?string $navigationIcon = 'heroicon-o-archive-box-arrow-down';
     protected static ?string $navigationGroup = 'Inventaris Barang';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 0;
 
 
     public static function form(Form $form): Form
