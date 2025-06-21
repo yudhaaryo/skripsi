@@ -10,11 +10,4 @@ class ListAlatDetails extends ListRecords
 {
     protected static string $resource = AlatDetailResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make()
-            ->label('Tambah Dari Yang Sudah Ada'),
-        ];
-    }
 }
