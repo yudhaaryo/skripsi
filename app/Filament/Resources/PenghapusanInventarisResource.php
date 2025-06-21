@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TextArea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 
 use Filament\Actions\Action;
@@ -69,7 +69,7 @@ class PenghapusanInventarisResource extends Resource
             DatePicker::make('tanggal_penghapusan')
                 ->label('Tanggal Penghapusan')
                 ->required(),
-            TextArea::make('keterangan')
+            Textarea::make('keterangan')
                 ->label('Keterangan Tambahan')
                 ->nullable(),
         ]);
