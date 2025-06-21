@@ -69,7 +69,7 @@ class PenghapusanInventarisResource extends Resource
             DatePicker::make('tanggal_penghapusan')
                 ->label('Tanggal Penghapusan')
                 ->required(),
-            Textarea::make('keterangan')
+            TextArea::make('keterangan')
                 ->label('Keterangan Tambahan')
                 ->nullable(),
         ]);
