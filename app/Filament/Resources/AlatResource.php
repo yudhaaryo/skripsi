@@ -73,6 +73,7 @@ class AlatResource extends Resource
                         'Rusak Berat' => 'Rusak Berat',
                         'Hilang' => 'Hilang',
                     ])->required(),
+                    
                     TextInput::make('keterangan')->label('Keterangan')->nullable(),
                 ])
                 ->minItems(1)

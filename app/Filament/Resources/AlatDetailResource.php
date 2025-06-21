@@ -11,11 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Support\Enums\ActionSize;
-use Filament\Tables\Enums\ActionsPosition;
-
+use Illuminate\Database\Eloquent\Builder;
 
 use Filament\Forms\Components\{
     Select,
@@ -167,6 +163,11 @@ class AlatDetailResource extends Resource
     //     ];
     // }
             }
+            public static function getEloquentQuery(): Builder
+{
+    $alatTerhapusIds = \App\Models\PenghapusanInventaris::where('jenis_inventaris', 'alat')->pluck('inventaris_id');
+    return parent::getEloquentQuery()->whereNotIn('id', $alatTerhapusIds);
+}
     public static function getPages(): array
     {
         return [

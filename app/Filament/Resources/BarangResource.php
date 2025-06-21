@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class BarangResource extends Resource
@@ -154,6 +155,11 @@ class BarangResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+{
+    $barangTerhapusIds = \App\Models\PenghapusanInventaris::where('jenis_inventaris', 'barang')->pluck('inventaris_id');
+    return parent::getEloquentQuery()->whereNotIn('id', $barangTerhapusIds);
+}
     public static function getPages(): array
     {
         return [

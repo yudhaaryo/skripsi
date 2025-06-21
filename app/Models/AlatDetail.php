@@ -13,6 +13,7 @@ class AlatDetail extends Model
         'tahun_alat',
         'kondisi_alat',
         'keterangan',
+    
     ];
 
     public function alat()
