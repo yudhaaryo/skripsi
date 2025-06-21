@@ -39,19 +39,19 @@ class PenghapusanInventarisResource extends Resource
                 ->required()
                 ->reactive(),
 
-            // Pilihan ALAT
+            
             Select::make('inventaris_id')
                 ->label('Pilih Alat/Unit atau Barang')
                 ->options(function (callable $get) {
                     if ($get('jenis_inventaris') === 'alat') {
-                        // Pilihan alat detail
+                        
                         return \App\Models\AlatDetail::all()->mapWithKeys(function ($unit) {
                             return [
                                 $unit->id => $unit->alat->nama_alat . ' - Unit ' . $unit->no_unit . ' (Kondisi: ' . $unit->kondisi_alat . ')'
                             ];
                         });
                     } elseif ($get('jenis_inventaris') === 'barang') {
-                        // Pilihan barang
+                        
                         return \App\Models\Barang::all()->mapWithKeys(function ($barang) {
                             return [
                                 $barang->id => $barang->nama_barang_aplikasi . ' (' . $barang->kode_barang . ')'
@@ -66,11 +66,9 @@ class PenghapusanInventarisResource extends Resource
             TextInput::make('alasan_penghapusan')
                 ->label('Alasan Penghapusan')
                 ->required(),
-
             DatePicker::make('tanggal_penghapusan')
                 ->label('Tanggal Penghapusan')
                 ->required(),
-
             Textarea::make('keterangan')
                 ->label('Keterangan Tambahan')
                 ->nullable(),
