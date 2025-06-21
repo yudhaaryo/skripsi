@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PengembalianResource\Pages;
 use App\Models\Pengembalian;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\ExportAction;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,9 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Enums\ActionsPosition;
+
 use App\Filament\Exports\PengembalianExporter;
 use Filament\Forms\Components\Select;
 
@@ -47,12 +51,7 @@ class PengembalianResource extends Resource
                 TextColumn::make('id')->label('ID'),
 
                 TextColumn::make('peminjaman.user.name')->label('Nama Peminjam'),
-
-                TextColumn::make('peminjaman.tanggal_pinjam')->label('Tanggal Peminjaman'),
-
-                TextColumn::make('tanggal_pengembalian')->label('Tanggal Pengembalian'),
-
-                TextColumn::make('peminjaman.alatDetails')
+                  TextColumn::make('peminjaman.alatDetails')
                     ->label('Nama Alat')
                     ->formatStateUsing(function ($state, $record) {
                         return $record->peminjaman->alatDetails->map(function ($detail) {
@@ -73,12 +72,29 @@ class PengembalianResource extends Resource
                     })
                     ->wrap(),
 
+                TextColumn::make('peminjaman.tanggal_pinjam')->label('Tanggal Peminjaman'),
+
+                TextColumn::make('tanggal_pengembalian')->label('Tanggal Pengembalian'),
+
+              
+
             ])
             ->actions([
-                EditAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
                 DeleteAction::make(),
-                ViewAction::make(),
+                ViewAction::make()
+
+                ])
+                
+                ->label('Aksi')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button(),
             ])
+            ->actionsPosition(ActionsPosition::BeforeCells)
+            
             ->bulkActions([
                 BulkActionGroup::make([
                     // ExportBulkAction::make()

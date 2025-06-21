@@ -12,6 +12,10 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\{TextColumn, BadgeColumn};
 use Filament\Tables\Actions\{EditAction, DeleteAction, DeleteBulkAction};
 use Filament\Tables\Filters\Filter;
+use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Actions\ActionGroup;
+
 
 
 
@@ -83,9 +87,19 @@ class BarangMasukResource extends Resource
             ])
 
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                DeleteAction::make()
+
+                ])
+                
+                ->label('Aksi')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button(),
             ])
+            ->actionsPosition(ActionsPosition::BeforeCells)
             ->bulkActions([
                 DeleteBulkAction::make(),
             ]);

@@ -9,7 +9,14 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Enums\ActionsPosition;
+
+
 use Filament\Forms\Components\{
     Select,
     TextInput,
@@ -130,27 +137,36 @@ class AlatDetailResource extends Resource
                         'success' => 'Tersedia',
                         'danger' => 'Dipinjam',
                     ]),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+                ]);
+            // ->filters([
+            //     //
+            // ])
+    //         ->actions([
+    //             ActionGroup::make([
+    //                 EditAction::make(),
+    //                 DeleteAction::make(),
+    //             ])
+    //                 ->label('Aksi')
+    //                 ->icon('heroicon-m-ellipsis-vertical')
+    //                 ->size(ActionSize::Small)
+    //                 ->color('primary')
+    //                 ->button(),
+    //         ])
+    //         ->actionsPosition(ActionsPosition::BeforeCells)
+    //         ->bulkActions([
+    //             Tables\Actions\BulkActionGroup::make([
+    //                 Tables\Actions\DeleteBulkAction::make(),
+    //             ]),
+    //         ]);
+    // }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
+    // public static function getRelations(): array
+    // {
+    //     return [
+    //         //
+    //     ];
+    // }
+            }
     public static function getPages(): array
     {
         return [

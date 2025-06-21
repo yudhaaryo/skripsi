@@ -20,6 +20,9 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Carbon\Carbon;
+use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Actions\ActionGroup;
 
 
 class BarangResource extends Resource
@@ -87,9 +90,19 @@ class BarangResource extends Resource
                 }),
         ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                DeleteAction::make()
+
+                ])
+                
+                ->label('Aksi')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button(),
             ])
+            ->actionsPosition(ActionsPosition::BeforeCells)
             ->bulkActions([
                 DeleteBulkAction::make(),
             ])

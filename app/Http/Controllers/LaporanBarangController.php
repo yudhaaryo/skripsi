@@ -27,30 +27,23 @@ class LaporanBarangController extends Controller
         $tanggalAkhirBulan = $tanggalAwalBulan->copy()->endOfMonth();
 
         $barangs = Barang::all()->map(function ($barang) use ($tanggalAwalBulan, $tanggalAkhirBulan) {
-            // Barang MASUK sebelum bulan ini
             $masukSebelumBulanIni = BarangMasuk::where('barang_id', $barang->id)
                 ->where('tanggal_masuk', '<', $tanggalAwalBulan)
                 ->sum('jumlah_masuk');
 
-            // Barang KELUAR sebelum bulan ini
             $keluarSebelumBulanIni = BarangKeluar::where('barang_id', $barang->id)
                 ->where('tanggal_keluar', '<', $tanggalAwalBulan)
                 ->sum('jumlah_keluar');
 
-            // Barang MASUK bulan ini
             $tambahBulanIni = BarangMasuk::where('barang_id', $barang->id)
                 ->whereBetween('tanggal_masuk', [$tanggalAwalBulan, $tanggalAkhirBulan])
                 ->sum('jumlah_masuk');
 
-            // Barang KELUAR bulan ini
             $keluarBulanIni = BarangKeluar::where('barang_id', $barang->id)
                 ->whereBetween('tanggal_keluar', [$tanggalAwalBulan, $tanggalAkhirBulan])
                 ->sum('jumlah_keluar');
 
-            // Hitung SALDO AWAL: stok saat awal bulan laporan
             $saldoAwal = $barang->jumlah_awal + $masukSebelumBulanIni - $keluarSebelumBulanIni;
-
-            // Hitung SALDO AKHIR: stok akhir bulan laporan
             $saldoAkhir = $saldoAwal + $tambahBulanIni - $keluarBulanIni;
 
             return [
@@ -68,32 +61,31 @@ class LaporanBarangController extends Controller
             ];
         });
 
-        // Filter, jika ingin menampilkan hanya yang dipakai atau habis
+        // Filter
         $filter = $request->input('filter_penggunaan', 'semua');
         if ($filter === 'digunakan') {
             $barangs = $barangs->filter(fn($b) => $b['digunakan'] > 0);
         }
         if ($filter === 'mutasi') {
-    $barangs = $barangs->filter(fn($b) => $b['tambah'] != 0 || $b['digunakan'] != 0);
-}
+            $barangs = $barangs->filter(fn($b) => $b['tambah'] != 0 || $b['digunakan'] != 0);
+        }
         if ($filter === 'habis') {
-            // Tampilkan hanya barang yang saldo akhirnya 0
             $barangs = $barangs->filter(fn($b) => $b['saldo_akhir'] == 0);
         }
 
-        // Jika tahun/bulan sebelum ada data, tetap akan kosong (tidak error)
+        // Jika tidak ada data (misal ekspor tahun/bulan kosong), bisa handle di view excel
         if ($barangs->count() === 0) {
-            // Jika ingin, bisa kirim view kosong atau handle sesuai kebutuhan
+            // Bisa kasih pesan atau sheet kosong
         }
 
-        // Export Excel dengan data laporan dan judul bulan
         return Excel::download(
             new LaporanBarangHabisExport(
                 $barangs,
-                'Nama Program', // Bisa diganti sesuai input
+                'Nama Program',
                 $carbonBulan->translatedFormat('F Y')
             ),
             'laporan_barang_' . $carbonBulan->format('Y_m') . '.xlsx'
         );
     }
 }
+

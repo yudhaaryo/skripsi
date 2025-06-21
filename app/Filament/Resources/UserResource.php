@@ -16,6 +16,9 @@ use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\ActionSize;
+
+use Filament\Tables\Enums\ActionsPosition;
 
 class UserResource extends Resource
 {
@@ -64,10 +67,18 @@ class UserResource extends Resource
                 ->badge()
                 ->separator(', '),
         ])
-        ->actions([
-            EditAction::make(),
-            DeleteAction::make(),
-        ])
+         ->actions([
+                \Filament\Tables\Actions\ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
+                    ->label('Aksi')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button(),
+            ])
+            ->actionsPosition(ActionsPosition::BeforeCells) 
         ->bulkActions([
             
         ]);

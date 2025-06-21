@@ -16,6 +16,10 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Support\Enums\ActionSize;
+
+use Filament\Tables\Enums\ActionsPosition;
+
 
 use Filament\Notifications\Notification;
 
@@ -46,7 +50,7 @@ class AlatResource extends Resource
                 ->nullable()
                 ->required(),
 
-           
+
             TextInput::make('jumlah_alat')
                 ->label('Jumlah Alat')
                 ->numeric()
@@ -55,7 +59,7 @@ class AlatResource extends Resource
                 ->default(0)
                 ->dehydrated(),
 
-            
+
             Repeater::make('details')
                 ->label('Detail/Unit Alat')
                 ->relationship('details')
@@ -112,9 +116,20 @@ class AlatResource extends Resource
                 //
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                \Filament\Tables\Actions\ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
+                    ->label('Aksi')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button(),
             ])
+            ->actionsPosition(ActionsPosition::BeforeCells) 
+
+
+
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

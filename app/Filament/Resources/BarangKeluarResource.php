@@ -20,7 +20,11 @@ use Filament\Tables\Actions\ExportAction;
 use Carbon\Carbon;
 use Filament\Tables\Actions\Modal\Actions\Action;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Actions\ActionGroup;
 
 class BarangKeluarResource extends Resource
 {
@@ -37,42 +41,61 @@ class BarangKeluarResource extends Resource
         return $form
             ->schema([
                 Select::make('barang_id')
-                    ->label('Nama Barang')
-                    ->relationship('barang', 'nama_barang_asli')
+    ->label('Nama Barang')
+    ->relationship('barang', 'nama_barang_asli')
+    ->searchable()
+    ->reactive()
+    ->required(),
 
-                    ->required(),
+TextInput::make('jumlah_keluar')
+    ->label('Jumlah Keluar')
+    ->numeric()
+    ->required()
+    ->minValue(1)
+    ->maxValue(function ($get, $state, $set, $livewire) {
+        // Ambil barang_id
+        $barangId = $get('barang_id');
+        if (!$barangId) return 0;
 
-                TextInput::make('jumlah_keluar')
-                    ->numeric()
-                    ->required()
-                    ->rules([
-                        function (callable $get) {
-                            return function ($attribute, $value, $fail) use ($get) {
-                                $barangId = $get('barang_id');
-                                if (!$barangId)
-                                    return;
-                                $barang = \App\Models\Barang::find($barangId);
-                                if (!$barang)
-                                    return;
+        $barang = \App\Models\Barang::find($barangId);
 
-                                $stok = $barang->total_barang ?? 0; // ganti sesuai accessor
-                
-                                // 1. Jika input lebih dari stok → tampilkan warning "melebihi stok"
-                                if ($value > $stok) {
-                                    $fail('Jumlah keluar melebihi stok yang tersedia! Sisa stok: ' . $stok);
-                                    return;
-                                }
+        // DETEKSI MODE EDIT DARI $livewire->record
+        $jumlahKeluarLama = 0;
+        if (isset($livewire->record)) {
+            $jumlahKeluarLama = $livewire->record->jumlah_keluar ?? 0;
+        }
 
-                                // 2. Jika stok habis (atau sudah 0, tidak bisa keluar lagi)
-                                if ($stok <= 0) {
-                                    $fail('Stok barang sudah habis, tidak bisa keluar.');
-                                    return;
-                                }
-                            };
-                        },
-                    ])
-                    ->minValue(1)
-                    ->label('Jumlah Keluar'),
+        // Stok sebenarnya
+        $stok = ($barang?->total_barang ?? 0) + $jumlahKeluarLama;
+        return $stok;
+    })
+    ->helperText(function ($get, $state, $set, $livewire) {
+        $barangId = $get('barang_id');
+        if (!$barangId) return 'Pilih barang dahulu';
+        $barang = \App\Models\Barang::find($barangId);
+        $jumlahKeluarLama = 0;
+        if (isset($livewire->record)) {
+            $jumlahKeluarLama = $livewire->record->jumlah_keluar ?? 0;
+        }
+        $stok = ($barang?->total_barang ?? 0) + $jumlahKeluarLama;
+        return 'Stok tersedia untuk keluar: ' . $stok;
+    })
+    ->disabled(function ($get, $state, $set, $livewire) {
+        $barangId = $get('barang_id');
+        if (!$barangId) return true;
+        $barang = \App\Models\Barang::find($barangId);
+        $jumlahKeluarLama = 0;
+        if (isset($livewire->record)) {
+            $jumlahKeluarLama = $livewire->record->jumlah_keluar ?? 0;
+        }
+        $stok = ($barang?->total_barang ?? 0) + $jumlahKeluarLama;
+        return $stok <= 0;
+    }),
+
+
+
+
+
 
 
 
@@ -122,8 +145,19 @@ class BarangKeluarResource extends Resource
 
 
             ->actions([
-                EditAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make()
+
+                ])
+
+                    ->label('Aksi')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button(),
             ])
+            ->actionsPosition(ActionsPosition::BeforeCells)
             ->bulkActions([
                 DeleteBulkAction::make(),
             ])
