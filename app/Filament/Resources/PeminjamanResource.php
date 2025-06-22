@@ -273,7 +273,15 @@ class PeminjamanResource extends Resource
                         ->label('Kembalikan')
                         ->icon('heroicon-o-arrow-uturn-left')
                         ->color('success')
-                        ->visible(fn($record) => auth()->user()?->can('kembalikan', $record))
+                        ->requiresConfirmation()
+                        ->visible(
+                            fn($record) =>
+                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            $record->status_pinjam === 'dipinjam'
+                        )
+
+
+
                         ->form(fn(Peminjaman $record) => [
                             DatePicker::make('tanggal_pengembalian')
                                 ->label('Tanggal Pengembalian')
@@ -311,7 +319,7 @@ class PeminjamanResource extends Resource
                         ->action(function (array $data, Peminjaman $record) {
                             $record->update(['status_pinjam' => 'dikembalikan']);
 
-                            Pengembalian::create([
+                            \App\Models\Pengembalian::create([
                                 'peminjaman_id' => $record->id,
                                 'tanggal_pengembalian' => $data['tanggal_pengembalian'],
                                 'kondisi_pengembalian' => 'Tercatat per alat',
@@ -329,6 +337,8 @@ class PeminjamanResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+
+
                     Action::make('lihat_detail')
                         ->label('Detail')
                         ->icon('heroicon-o-eye')
