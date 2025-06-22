@@ -318,19 +318,11 @@ class PeminjamanResource extends Resource
 
 
 
-                    EditAction::make()
-                        ->visible(
-                            fn($record) =>
-                            $record->user_id === Auth::id() ||
-                            auth()->user()?->hasRole('admin')
-                        ),
+                    EditAction::make(),
+                        
 
-                    DeleteAction::make()
-                        ->visible(
-                            fn($record) =>
-                            $record->user_id === Auth::id() ||
-                            auth()->user()?->hasRole('admin')
-                        ),
+                    DeleteAction::make(),
+                        
                 ])
                     ->label('Aksi')
                     ->icon('heroicon-m-ellipsis-vertical')

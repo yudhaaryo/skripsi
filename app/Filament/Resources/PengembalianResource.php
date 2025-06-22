@@ -81,8 +81,7 @@ class PengembalianResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    EditAction::make(),
-                DeleteAction::make()
+                DeleteAction::make(),
 
                 ])
                 
