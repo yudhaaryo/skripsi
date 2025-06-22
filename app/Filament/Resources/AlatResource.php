@@ -139,10 +139,12 @@ class AlatResource extends Resource
             ->headerActions([
                 Action::make('create')
                     ->label('Tambah Jenis Alat Baru')
-                    ->url(route('filament.admin.resources.alats.create')),
+                    ->url(route('filament.admin.resources.alats.create'))
+                     ->visible(fn () => !auth()->user()?->hasRole('siswa')),
                 Action::make('tambah_unit')
                     ->label('Tambah Unit Alat')
-                    ->url(route('filament.admin.resources.alats.tambah-unit')),
+                    ->url(route('filament.admin.resources.alats.tambah-unit'))
+                     ->visible(fn () => !auth()->user()?->hasRole('siswa')),
             ]);
     }
 
@@ -157,7 +159,6 @@ class AlatResource extends Resource
             'index' => Pages\ListAlats::route('/'),
             'create' => Pages\CreateAlat::route('/create'),
             'edit' => Pages\EditAlat::route('/{record}/edit'),
-            // Custom page untuk tambah unit:
             'tambah-unit' => Pages\TambahUnitAlat::route('/tambah-unit'),
         ];
     }
