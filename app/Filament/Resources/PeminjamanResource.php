@@ -50,10 +50,10 @@ class PeminjamanResource extends Resource
             TextInput::make('nis_peminjam')->required(),
             DatePicker::make('tanggal_pinjam')
                 ->required()
-                ->minDate(today()),
+                ->minDate(today()), 
             DatePicker::make('tanggal_kembali')
                 ->required()
-                ->minDate(today()),
+                ->minDate(today()), 
 
 
             TextInput::make('keperluan')
@@ -128,6 +128,17 @@ class PeminjamanResource extends Resource
                 TextColumn::make('user.name')
                     ->label('Nama Peminjam')
                     ->searchable(),
+                TextColumn::make('kelas_peminjam')
+                    ->searchable(),
+                TextColumn::make('nis_peminjam')
+                    ->searchable(),
+                TextColumn::make('keperluan')
+                    ->label('Keperluan')
+                    ->wrap()
+                    ->searchable(),
+                TextColumn::make('tanggal_pinjam'),
+                TextColumn::make('tanggal_kembali'),
+
                 TextColumn::make('alat_dipinjam')
                     ->label('Alat Dipinjam')
                     ->getStateUsing(function ($record) {
@@ -136,18 +147,8 @@ class PeminjamanResource extends Resource
                         $count = $details->count();
                         return $count > 2 ? "$names, +" . ($count - 2) . " lainnya" : $names;
                     }),
-                TextColumn::make('kelas_peminjam')
-                    ->searchable(),
-                TextColumn::make('nis_peminjam')
-                    ->searchable(),
-                TextColumn::make('file_surat')
-                    ->label('Surat')
-                    ->formatStateUsing(fn($state) => $state ? '📄 Lihat Surat' : '-')
-                    ->url(fn($record) => $record->file_surat ? \Storage::url($record->file_surat) : null),
-                TextColumn::make('keperluan')
-                    ->label('Keperluan')
-                    ->wrap()
-                    ->searchable(),
+
+
                 TextColumn::make('status_pinjam')
                     ->label('Status')
                     ->badge()
@@ -158,13 +159,11 @@ class PeminjamanResource extends Resource
                         'warning' => 'dikembalikan',
                     ])
                     ->sortable(),
-                TextColumn::make('tanggal_pinjam'),
-                TextColumn::make('tanggal_kembali'),
 
-
-
-
-
+                TextColumn::make('file_surat')
+                    ->label('Surat')
+                    ->formatStateUsing(fn($state) => $state ? '📄 Lihat Surat' : '-')
+                    ->url(fn($record) => $record->file_surat ? \Storage::url($record->file_surat) : null),
             ])
             ->filters([
                 Filter::make('terlambat')
@@ -206,27 +205,17 @@ class PeminjamanResource extends Resource
                         ->label('Setujui')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
+                        ->visible(fn($record) => auth()->user()?->can('setujui', $record))
                         ->requiresConfirmation()
-                        ->visible(function ($record) {
-                            return auth()->user()?->hasAnyRole(['admin', 'guru'])
-                                && $record->status_pinjam === 'menunggu';
-                        })
-                        ->action(function (Peminjaman $record) {
-                            $record->update(['status_pinjam' => 'dipinjam']);
-                        }),
+                        ->action(fn(Peminjaman $record) => $record->update(['status_pinjam' => 'dipinjam'])),
 
                     Action::make('tolak')
                         ->label('Tolak')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
+                        ->visible(fn($record) => auth()->user()?->can('tolak', $record))
                         ->requiresConfirmation()
-                        ->visible(function ($record) {
-                            return auth()->user()?->hasAnyRole(['admin', 'guru'])
-                                && $record->status_pinjam === 'menunggu';
-                        })
-                        ->action(function (Peminjaman $record) {
-                            $record->update(['status_pinjam' => 'ditolak']);
-                        }),
+                        ->action(fn(Peminjaman $record) => $record->update(['status_pinjam' => 'ditolak'])),
 
                     Action::make('cetak_surat')
                         ->label('Cetak Surat')
@@ -330,10 +319,10 @@ class PeminjamanResource extends Resource
 
 
                     EditAction::make(),
-
+                        
 
                     DeleteAction::make(),
-
+                        
                 ])
                     ->label('Aksi')
                     ->icon('heroicon-m-ellipsis-vertical')
@@ -358,14 +347,14 @@ class PeminjamanResource extends Resource
         ];
     }
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-    {
-        $query = parent::getEloquentQuery();
+{
+    $query = parent::getEloquentQuery();
 
-        if (auth()->user()?->hasRole('siswa')) {
-            $query->where('user_id', auth()->id());
-        }
-
-        return $query;
+    if (auth()->user()?->hasRole('siswa')) {
+        $query->where('user_id', auth()->id());
     }
+
+    return $query;
+}
 
 }
