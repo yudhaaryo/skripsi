@@ -49,9 +49,9 @@ class PengembalianResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('no')
-    ->label('No')
-    ->formatStateUsing(fn ($state, $record, $column) => $column->getRowLoop()->iteration),
+    //             TextColumn::make('no')
+    // ->label('No')
+    // ->formatStateUsing(fn ($state, $record, $column) => $column->getRowLoop()->iteration),
 
 
                 TextColumn::make('peminjaman.user.name')->label('Nama Peminjam'),
