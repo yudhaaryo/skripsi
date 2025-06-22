@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Peminjaman;
+use App\Models\PenghapusanInventaris;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PeminjamanPolicy
+class PenghapusanInventarisPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class PeminjamanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_peminjaman');
+        return $user->can('view_any_penghapusan::inventaris');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Peminjaman $peminjaman): bool
+    public function view(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('view_peminjaman');
+        return $user->can('view_penghapusan::inventaris');
     }
 
     /**
@@ -31,23 +31,23 @@ class PeminjamanPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_peminjaman');
+        return $user->can('create_penghapusan::inventaris');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Peminjaman $peminjaman): bool
+    public function update(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('update_peminjaman');
+        return $user->can('update_penghapusan::inventaris');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Peminjaman $peminjaman): bool
+    public function delete(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('delete_peminjaman');
+        return $user->can('delete_penghapusan::inventaris');
     }
 
     /**
@@ -55,15 +55,15 @@ class PeminjamanPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_peminjaman');
+        return $user->can('delete_any_penghapusan::inventaris');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Peminjaman $peminjaman): bool
+    public function forceDelete(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('force_delete_peminjaman');
+        return $user->can('force_delete_penghapusan::inventaris');
     }
 
     /**
@@ -71,15 +71,15 @@ class PeminjamanPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_peminjaman');
+        return $user->can('force_delete_any_penghapusan::inventaris');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Peminjaman $peminjaman): bool
+    public function restore(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('restore_peminjaman');
+        return $user->can('restore_penghapusan::inventaris');
     }
 
     /**
@@ -87,15 +87,15 @@ class PeminjamanPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_peminjaman');
+        return $user->can('restore_any_penghapusan::inventaris');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Peminjaman $peminjaman): bool
+    public function replicate(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('replicate_peminjaman');
+        return $user->can('replicate_penghapusan::inventaris');
     }
 
     /**
@@ -103,6 +103,6 @@ class PeminjamanPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_peminjaman');
+        return $user->can('reorder_penghapusan::inventaris');
     }
 }
