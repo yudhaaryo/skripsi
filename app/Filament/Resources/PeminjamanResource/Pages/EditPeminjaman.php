@@ -12,22 +12,7 @@ class EditPeminjaman extends EditRecord
 
     protected array $alatPivotData = [];
 
-    public static function canAccess(array $parameters = []): bool
-{
-    $user = Auth::user();
 
-    // Admin dan guru boleh akses semua
-    if ($user?->hasAnyRole(['admin', 'guru'])) {
-        return true;
-    }
-
-    // Jika record tersedia (siswa), cek apakah itu miliknya
-    if (isset($parameters['record']) && $parameters['record'] instanceof \App\Models\Peminjaman) {
-        return $parameters['record']->user_id === $user->id;
-    }
-
-    return false;
-}
 
 
 
