@@ -50,10 +50,10 @@ class PeminjamanResource extends Resource
             TextInput::make('nis_peminjam')->required(),
             DatePicker::make('tanggal_pinjam')
                 ->required()
-                ->minDate(today()), // tidak bisa memilih tanggal sebelum hari ini
+                ->minDate(today()), 
             DatePicker::make('tanggal_kembali')
                 ->required()
-                ->minDate(today()), // juga tidak bisa memilih tanggal sebelum hari ini
+                ->minDate(today()), 
 
 
             TextInput::make('keperluan')

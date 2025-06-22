@@ -39,7 +39,10 @@ class PeminjamanPolicy
      */
     public function update(User $user, Peminjaman $peminjaman): bool
     {
-        return $user->can('update_peminjaman');
+        // Bisa update jika dia admin/guru/super_admin atau pemilik data
+        return
+            $user->hasAnyRole(['super_admin', 'admin', 'guru']) ||
+            $peminjaman->user_id === $user->id;
     }
 
     /**
@@ -47,7 +50,10 @@ class PeminjamanPolicy
      */
     public function delete(User $user, Peminjaman $peminjaman): bool
     {
-        return $user->can('delete_peminjaman');
+        // Bisa delete jika dia admin/guru/super_admin atau pemilik data
+        return
+            $user->hasAnyRole(['super_admin', 'admin', 'guru']) ||
+            $peminjaman->user_id === $user->id;
     }
 
     /**
@@ -105,12 +111,13 @@ class PeminjamanPolicy
     {
         return $user->can('reorder_peminjaman');
     }
-        /**
+
+    /**
      * Aksi untuk menyetujui peminjaman.
      */
     public function setujui(User $user, Peminjaman $peminjaman): bool
     {
-        return $user->hasAnyRole(['super_admin','admin', 'guru'])
+        return $user->hasAnyRole(['super_admin', 'admin', 'guru'])
             && $peminjaman->status_pinjam === 'menunggu'
             && !empty($peminjaman->file_surat);
     }
@@ -120,7 +127,7 @@ class PeminjamanPolicy
      */
     public function tolak(User $user, Peminjaman $peminjaman): bool
     {
-        return $user->hasAnyRole(['super_admin','admin', 'guru'])
+        return $user->hasAnyRole(['super_admin', 'admin', 'guru'])
             && $peminjaman->status_pinjam === 'menunggu';
     }
 
@@ -129,8 +136,7 @@ class PeminjamanPolicy
      */
     public function kembalikan(User $user, Peminjaman $peminjaman): bool
     {
-        return $user->hasAnyRole(['super_admin','admin', 'guru'])
+        return $user->hasAnyRole(['super_admin', 'admin', 'guru'])
             && $peminjaman->status_pinjam === 'dipinjam';
     }
-
 }
