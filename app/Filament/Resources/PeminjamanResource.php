@@ -49,11 +49,15 @@ class PeminjamanResource extends Resource
             TextInput::make('kelas_peminjam')->required(),
             TextInput::make('nis_peminjam')->required(),
             DatePicker::make('tanggal_pinjam')
+                ->label('Tanggal Pinjam')
                 ->required()
                 ->minDate(today()),
+
             DatePicker::make('tanggal_kembali')
+                ->label('Tanggal Kembali')
                 ->required()
-                ->minDate(today()),
+                ->afterOrEqual('tanggal_pinjam'),
+
 
 
             TextInput::make('keperluan')
@@ -206,7 +210,11 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->visible(fn($record) => auth()->user()?->can('setujui', $record))
+                        ->visible(
+                            fn($record) =>
+                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            $record->status_pinjam === 'menunggu'
+                        )
                         ->action(
                             fn(Peminjaman $record) =>
                             $record->update(['status_pinjam' => 'dipinjam'])
@@ -217,11 +225,17 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->visible(fn($record) => auth()->user()?->can('tolak', $record))
+                        ->visible(
+                            fn($record) =>
+                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            $record->status_pinjam === 'menunggu'
+                        )
                         ->action(
                             fn(Peminjaman $record) =>
                             $record->update(['status_pinjam' => 'ditolak'])
                         ),
+
+
 
                     Action::make('cetak_surat')
                         ->label('Cetak Surat')

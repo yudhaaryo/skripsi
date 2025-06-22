@@ -105,29 +105,5 @@ class PeminjamanPolicy
     {
         return $user->can('reorder_peminjaman');
     }
-    public function setujui(User $user, Peminjaman $peminjaman): bool
-    {
-        return in_array($user->role, ['admin', 'guru']) && $peminjaman->status_pinjam === 'menunggu';
-    }
-
-    public function tolak(User $user, Peminjaman $peminjaman): bool
-    {
-        return in_array($user->role, ['admin', 'guru']) && $peminjaman->status_pinjam === 'menunggu';
-    }
-
-    public function cetakSurat(User $user, Peminjaman $peminjaman): bool
-    {
-        return $user->id === $peminjaman->user_id && $peminjaman->status_pinjam === 'menunggu';
-    }
-
-    public function uploadSurat(User $user, Peminjaman $peminjaman): bool
-    {
-        return $user->id === $peminjaman->user_id && $peminjaman->status_pinjam === 'menunggu';
-    }
-
-    public function kembalikan(User $user, Peminjaman $peminjaman): bool
-    {
-        return in_array($user->role, ['admin', 'guru']) && $peminjaman->status_pinjam === 'dipinjam';
-    }
-
+    
 }
