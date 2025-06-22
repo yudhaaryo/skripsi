@@ -15,7 +15,7 @@ class PenghapusanInventarisPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_penghapusan_inventaris');
+        return $user->can('view_any_penghapusan::inventaris');
     }
 
     /**
@@ -23,7 +23,7 @@ class PenghapusanInventarisPolicy
      */
     public function view(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('view_penghapusan_inventaris');
+        return $user->can('view_penghapusan::inventaris');
     }
 
     /**
@@ -31,7 +31,7 @@ class PenghapusanInventarisPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_penghapusan_inventaris');
+        return $user->can('create_penghapusan::inventaris');
     }
 
     /**
@@ -39,7 +39,7 @@ class PenghapusanInventarisPolicy
      */
     public function update(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('update_penghapusan_inventaris');
+        return $user->can('update_penghapusan::inventaris');
     }
 
     /**
@@ -47,7 +47,7 @@ class PenghapusanInventarisPolicy
      */
     public function delete(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('delete_penghapusan_inventaris');
+        return $user->can('delete_penghapusan::inventaris');
     }
 
     /**
@@ -55,7 +55,7 @@ class PenghapusanInventarisPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_penghapusan_inventaris');
+        return $user->can('delete_any_penghapusan::inventaris');
     }
 
     /**
@@ -63,7 +63,7 @@ class PenghapusanInventarisPolicy
      */
     public function forceDelete(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('force_delete_penghapusan_inventaris');
+        return $user->can('force_delete_penghapusan::inventaris');
     }
 
     /**
@@ -71,7 +71,7 @@ class PenghapusanInventarisPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_penghapusan_inventaris');
+        return $user->can('force_delete_any_penghapusan::inventaris');
     }
 
     /**
@@ -79,7 +79,7 @@ class PenghapusanInventarisPolicy
      */
     public function restore(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('restore_penghapusan_inventaris');
+        return $user->can('restore_penghapusan::inventaris');
     }
 
     /**
@@ -87,7 +87,7 @@ class PenghapusanInventarisPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_penghapusan_inventaris');
+        return $user->can('restore_any_penghapusan::inventaris');
     }
 
     /**
@@ -95,7 +95,7 @@ class PenghapusanInventarisPolicy
      */
     public function replicate(User $user, PenghapusanInventaris $penghapusanInventaris): bool
     {
-        return $user->can('replicate_penghapusan_inventaris');
+        return $user->can('replicate_penghapusan::inventaris');
     }
 
     /**
@@ -103,6 +103,6 @@ class PenghapusanInventarisPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_penghapusan_inventaris');
+        return $user->can('reorder_penghapusan::inventaris');
     }
 }

@@ -119,7 +119,7 @@ class AlatResource extends Resource
             ->actions([
                 \Filament\Tables\Actions\ActionGroup::make([
                     EditAction::make(),
-                    DeleteAction::make(),
+                    
                 ])
                     ->label('Aksi')
                     ->icon('heroicon-m-ellipsis-vertical')

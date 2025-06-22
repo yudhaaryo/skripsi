@@ -92,8 +92,7 @@ class BarangResource extends Resource
         ])
             ->actions([
                 ActionGroup::make([
-                    EditAction::make(),
-                DeleteAction::make()
+                    EditAction::make()
 
                 ])
                 
