@@ -16,19 +16,19 @@ class EditPeminjaman extends EditRecord
 {
     $user = Auth::user();
 
-    // Admin dan guru bisa akses semua
+    // Admin dan guru boleh akses semua
     if ($user?->hasAnyRole(['admin', 'guru'])) {
         return true;
     }
 
-
-    if (isset($parameters['record'])) {
-        $record = \App\Models\Peminjaman::find($parameters['record']);
-
-        return $record && $record->user_id === $user->id;
+    // Jika record tersedia (siswa), cek apakah itu miliknya
+    if (isset($parameters['record']) && $parameters['record'] instanceof \App\Models\Peminjaman) {
+        return $parameters['record']->user_id === $user->id;
     }
 
     return false;
+}
+
 }
 
     protected function mutateFormDataBeforeFill(array $data): array
