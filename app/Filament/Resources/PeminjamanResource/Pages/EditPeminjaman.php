@@ -13,10 +13,24 @@ class EditPeminjaman extends EditRecord
     protected array $alatPivotData = [];
 
     public static function canAccess(array $parameters = []): bool
-    {
-        $user = Auth::user();
-        return $user?->hasAnyRole(['admin', 'guru']) || $user?->name === $parameters['record']?->nama_peminjam;
+{
+    $user = Auth::user();
+
+    // Admin dan guru bisa akses semua
+    if ($user?->hasAnyRole(['admin', 'guru'])) {
+        return true;
     }
+
+
+    if (isset($parameters['record'])) {
+        $record = \App\Models\Peminjaman::find($parameters['record']);
+
+        return $record && $record->user_id === $user->id;
+    }
+
+    return false;
+}
+
     protected function mutateFormDataBeforeFill(array $data): array
 {
     $data['alats'] = $this->record->alatDetails
