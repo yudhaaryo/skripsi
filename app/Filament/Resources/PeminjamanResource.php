@@ -128,18 +128,7 @@ class PeminjamanResource extends Resource
                 TextColumn::make('user.name')
                     ->label('Nama Peminjam')
                     ->searchable(),
-                TextColumn::make('kelas_peminjam')
-                    ->searchable(),
-                TextColumn::make('nis_peminjam')
-                    ->searchable(),
-                TextColumn::make('keperluan')
-                    ->label('Keperluan')
-                    ->wrap()
-                    ->searchable(),
-                TextColumn::make('tanggal_pinjam'),
-                TextColumn::make('tanggal_kembali'),
-
-                TextColumn::make('alat_dipinjam')
+                     TextColumn::make('alat_dipinjam')
                     ->label('Alat Dipinjam')
                     ->getStateUsing(function ($record) {
                         $details = $record->alatDetails;
@@ -147,9 +136,19 @@ class PeminjamanResource extends Resource
                         $count = $details->count();
                         return $count > 2 ? "$names, +" . ($count - 2) . " lainnya" : $names;
                     }),
-
-
-                TextColumn::make('status_pinjam')
+                TextColumn::make('kelas_peminjam')
+                    ->searchable(),
+                TextColumn::make('nis_peminjam')
+                    ->searchable(),
+                     TextColumn::make('file_surat')
+                    ->label('Surat')
+                    ->formatStateUsing(fn($state) => $state ? '📄 Lihat Surat' : '-')
+                    ->url(fn($record) => $record->file_surat ? \Storage::url($record->file_surat) : null),
+                TextColumn::make('keperluan')
+                    ->label('Keperluan')
+                    ->wrap()
+                    ->searchable(),
+                    TextColumn::make('status_pinjam')
                     ->label('Status')
                     ->badge()
                     ->colors([
@@ -159,11 +158,13 @@ class PeminjamanResource extends Resource
                         'warning' => 'dikembalikan',
                     ])
                     ->sortable(),
+                TextColumn::make('tanggal_pinjam'),
+                TextColumn::make('tanggal_kembali'),
 
-                TextColumn::make('file_surat')
-                    ->label('Surat')
-                    ->formatStateUsing(fn($state) => $state ? '📄 Lihat Surat' : '-')
-                    ->url(fn($record) => $record->file_surat ? \Storage::url($record->file_surat) : null),
+            
+                
+
+               
             ])
             ->filters([
                 Filter::make('terlambat')
