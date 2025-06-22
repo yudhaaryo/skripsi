@@ -20,6 +20,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Enums\ActionsPosition;
+use Illuminate\Database\Eloquent\Builder;
 
 use App\Filament\Exports\PengembalianExporter;
 use Filament\Forms\Components\Select;
@@ -107,7 +108,20 @@ class PengembalianResource extends Resource
             ]);
     }
 
+public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
 
+    
+    if (auth()->user()?->hasRole('siswa')) {
+        return $query->whereHas('peminjaman', function ($q) {
+            $q->where('user_id', auth()->id());
+        });
+    }
+
+    // Jika bukan siswa, tampilkan semua
+    return $query;
+}
 
     public static function getRelations(): array
     {
