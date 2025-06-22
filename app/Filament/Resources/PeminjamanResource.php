@@ -206,7 +206,11 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->visible(fn($record) => $record->status_pinjam === 'menunggu')
+                        ->visible(fn($record) =>
+    in_array(auth()->user()?->role, ['admin', 'guru']) &&
+    $record->status_pinjam === 'menunggu'
+)
+
 
                         ->action(
                             fn(Peminjaman $record) =>
@@ -218,7 +222,10 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->visible(fn($record) => $record->status_pinjam === 'menunggu')
+                        ->visible(fn($record) =>
+    in_array(auth()->user()?->role, ['admin', 'guru']) &&
+    $record->status_pinjam === 'menunggu'
+)
                         ->action(
                             fn(Peminjaman $record) =>
                             $record->update(['status_pinjam' => 'ditolak'])
