@@ -212,7 +212,7 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->visible(
                             fn($record) =>
-                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            !auth()->user()?->hasAnyRole(['admin', 'guru']) &&
                             $record->status_pinjam === 'menunggu'
                         )
                         ->action(
@@ -242,7 +242,7 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-printer')
                         ->color('info')
                         ->requiresConfirmation()
-                        ->visible(fn($record) => auth()->user()?->can('cetakSurat', $record))
+                        ->visible(fn($record) => !auth()->user()?->can('cetakSurat', $record))
                         ->action(
                             fn(Peminjaman $record) =>
                             redirect()->route('peminjaman.surat', ['id' => $record->id])
@@ -252,7 +252,7 @@ class PeminjamanResource extends Resource
                         ->label('Upload Surat')
                         ->icon('heroicon-o-arrow-up-tray')
                         ->color('gray')
-                        ->visible(fn($record) => auth()->user()?->can('uploadSurat', $record))
+                        ->visible(fn($record) => !auth()->user()?->can('uploadSurat', $record))
                         ->form([
                             FileUpload::make('file_surat')
                                 ->label('Unggah Surat Bertandatangan')
@@ -276,7 +276,7 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->visible(
                             fn($record) =>
-                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            !auth()->user()?->hasAnyRole(['admin', 'guru']) &&
                             $record->status_pinjam === 'dipinjam'
                         )
 

@@ -21,10 +21,6 @@ class Pengembalian extends Model
     {
         return $this->belongsTo(Peminjaman::class, 'peminjaman_id');
     }
-    public function alatPengembalians()
-{
-    return $this->belongsToMany(Alat::class, 'alat_pengembalian')
-        ->withPivot('kondisi_pengembalian');
-}
+
 
 }

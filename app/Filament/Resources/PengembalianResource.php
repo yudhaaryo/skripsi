@@ -122,7 +122,7 @@ public static function getEloquentQuery(): Builder
         });
     }
 
-    // Jika bukan siswa, tampilkan semua
+    
     return $query;
 }
 
