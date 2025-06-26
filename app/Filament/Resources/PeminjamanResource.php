@@ -51,12 +51,18 @@ class PeminjamanResource extends Resource
             DatePicker::make('tanggal_pinjam')
                 ->label('Tanggal Pinjam')
                 ->required()
-                ->minDate(today()),
+                ->minDate(today())
+                ->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+
+                    $set('tanggal_kembali', null);
+                }),
 
             DatePicker::make('tanggal_kembali')
                 ->label('Tanggal Kembali')
                 ->required()
-                ->afterOrEqual('tanggal_pinjam'),
+                ->reactive()
+                ->minDate(fn(callable $get) => $get('tanggal_pinjam')),
 
 
 
@@ -82,7 +88,7 @@ class PeminjamanResource extends Resource
                 ->label('Unggah Surat')
                 ->directory('surat-peminjaman')
                 ->acceptedFileTypes(['application/pdf', 'image/*'])
-                ->visible(fn() => Auth::user()?->hasRole('siswa', 'guru')),
+                ->visible(fn() => Auth::user()?->hasRole('siswa', 'web')),
             Repeater::make('alats')
                 ->label('Pilih Unit Alat')
                 ->columnSpan(2)
@@ -212,7 +218,7 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->visible(
                             fn($record) =>
-                            !auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            Auth::user()?->hasAnyRole(['admin', 'guru'], 'web') &&
                             $record->status_pinjam === 'menunggu'
                         )
                         ->action(
@@ -227,13 +233,14 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->visible(
                             fn($record) =>
-                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            Auth::user()?->hasAnyRole(['admin', 'guru'], 'web') &&
                             $record->status_pinjam === 'menunggu'
                         )
                         ->action(
                             fn(Peminjaman $record) =>
                             $record->update(['status_pinjam' => 'ditolak'])
                         ),
+
 
 
 
@@ -276,7 +283,7 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->visible(
                             fn($record) =>
-                            !auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            Auth::user()?->hasAnyRole(['admin', 'guru'], 'web') &&
                             $record->status_pinjam === 'dipinjam'
                         )
 

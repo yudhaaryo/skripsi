@@ -64,7 +64,7 @@ class AlatResource extends Resource
                 ->label('Detail/Unit Alat')
                 ->relationship('details')
                 ->schema([
-                    TextInput::make('no_unit')->label('No. Unit')->required(),
+                    TextInput::make('no_unit')->label('No. Unit')->required()->rule('integer'),
                     TextInput::make('tahun_alat')->label('Tahun Alat')->numeric()->minValue(2000)->maxValue(now()->year + 1)->required()->placeholder('Misal:2020'),
                     TextInput::make('kode_alat')->label('Kode Alat')->required(),
                     Select::make('kondisi_alat')->label('Kondisi')->options([
