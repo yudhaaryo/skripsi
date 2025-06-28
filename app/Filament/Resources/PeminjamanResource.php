@@ -216,11 +216,12 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->visible(fn($record) => 
-    in_array('admin', Auth::user()?->getRoleNames()->toArray() ?? []) ||
-    in_array('guru', Auth::user()?->getRoleNames()->toArray() ?? []) &&
-    $record->status_pinjam === 'menunggu'
-)
+                        ->authorize(false)
+                        ->visible(
+                            fn($record) =>
+                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            $record->status_pinjam === 'menunggu'
+                        )
 
 
 
@@ -236,11 +237,12 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->visible(fn($record) => 
-    in_array('admin', Auth::user()?->getRoleNames()->toArray() ?? []) ||
-    in_array('guru', Auth::user()?->getRoleNames()->toArray() ?? []) &&
-    $record->status_pinjam === 'menunggu'
-)
+                        ->authorize(false)
+                        ->visible(
+                            fn($record) =>
+                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            $record->status_pinjam === 'menunggu'
+                        )
 
 
 
