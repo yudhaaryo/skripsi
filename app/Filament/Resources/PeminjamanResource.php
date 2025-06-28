@@ -219,6 +219,17 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->action(fn(Peminjaman $record) => $record->update(['status_pinjam' => 'dipinjam'])),
 
+                    Action::make('test_button')
+                        ->label('Test Button')
+                        ->icon('heroicon-o-bolt')
+                        ->color('warning')
+                        ->action(
+                            fn($record) =>
+                            \Filament\Notifications\Notification::make()
+                                ->title('Test Action Berhasil')
+                                ->success()
+                                ->send()
+                        ),
 
 
                     Action::make('tolak')
