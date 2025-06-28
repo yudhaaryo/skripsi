@@ -215,15 +215,9 @@ class PeminjamanResource extends Resource
                         ->label('Setujui')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn($record) => auth()->user()?->can('setujui', $record))
+                        ->authorize('setujui') // Panggil policy setujui
                         ->requiresConfirmation()
-                        ->action(function (Peminjaman $record) {
-                            $record->update(['status_pinjam' => 'dipinjam']);
-                        }),
-
-
-
-
+                        ->action(fn(Peminjaman $record) => $record->update(['status_pinjam' => 'dipinjam'])),
 
 
 
@@ -231,11 +225,9 @@ class PeminjamanResource extends Resource
                         ->label('Tolak')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
-                        ->visible(fn($record) => auth()->user()?->can('tolak', $record))
+                        ->authorize('tolak') // Panggil policy tolak
                         ->requiresConfirmation()
-                        ->action(fn($record) => $record->update(['status_pinjam' => 'ditolak'])),
-
-
+                        ->action(fn(Peminjaman $record) => $record->update(['status_pinjam' => 'ditolak'])),
 
 
                     Action::make('cetak_surat')
