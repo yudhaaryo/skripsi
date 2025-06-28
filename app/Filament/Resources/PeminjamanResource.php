@@ -238,16 +238,17 @@ class PeminjamanResource extends Resource
 
 
 
-                    Action::make('cetak_surat')
-                        ->label('Cetak Surat')
-                        ->icon('heroicon-o-printer')
-                        ->color('info')
-                        ->requiresConfirmation()
-                        ->visible(fn($record) => !auth()->user()?->can('cetakSurat', $record))
-                        ->action(
-                            fn(Peminjaman $record) =>
-                            redirect()->route('peminjaman.surat', ['id' => $record->id])
-                        ),
+                     Action::make('cetak_surat')
+                    ->label('Cetak Surat')
+                    ->icon('heroicon-o-printer')
+                    ->color('info')
+                    ->visible(
+                        fn($record) =>
+                        $record->status_pinjam === 'menunggu' &&
+                        $record->user_id === auth()->user()->id
+                    )
+                    ->requiresConfirmation()
+                    ->action(fn(Peminjaman $record) => redirect()->route('peminjaman.surat', ['id' => $record->id])),
 
                     Action::make('upload_surat')
                         ->label('Upload Surat')
