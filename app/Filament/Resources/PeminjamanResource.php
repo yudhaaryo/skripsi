@@ -212,14 +212,14 @@ class PeminjamanResource extends Resource
             ->actions([
                 \Filament\Tables\Actions\ActionGroup::make([
                     Action::make('setujui')
-                    ->label('Setujui')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->visible(fn($record) => auth()->user()?->can('setujui', $record))
-                    ->requiresConfirmation()
-                    ->action(function (Peminjaman $record) {
-                        $record->update(['status_pinjam' => 'dipinjam']);
-                    }),
+                        ->label('Setujui')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->visible(fn($record) => auth()->user()?->can('setujui', $record))
+                        ->requiresConfirmation()
+                        ->action(function (Peminjaman $record) {
+                            $record->update(['status_pinjam' => 'dipinjam']);
+                        }),
 
 
 
@@ -228,33 +228,36 @@ class PeminjamanResource extends Resource
 
 
                     Action::make('tolak')
-                    ->label('Tolak')
-                    ->icon('heroicon-o-x-circle')
-                    ->color('danger')
-                    ->visible(fn($record) => auth()->user()?->can('tolak', $record))
-                    ->requiresConfirmation()
-                    ->action(fn($record) => $record->update(['status_pinjam' => 'ditolak'])),
+                        ->label('Tolak')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->visible(fn($record) => auth()->user()?->can('tolak', $record))
+                        ->requiresConfirmation()
+                        ->action(fn($record) => $record->update(['status_pinjam' => 'ditolak'])),
 
 
 
 
-                     Action::make('cetak_surat')
-                    ->label('Cetak Surat')
-                    ->icon('heroicon-o-printer')
-                    ->color('info')
-                    ->visible(
-                        fn($record) =>
-                        $record->status_pinjam === 'menunggu' &&
-                        $record->user_id === auth()->user()->id
-                    )
-                    ->requiresConfirmation()
-                    ->action(fn(Peminjaman $record) => redirect()->route('peminjaman.surat', ['id' => $record->id])),
+                    Action::make('cetak_surat')
+                        ->label('Cetak Surat')
+                        ->icon('heroicon-o-printer')
+                        ->color('info')
+                        ->visible(
+                            fn($record) =>
+                            $record->status_pinjam === 'menunggu' &&
+                            $record->user_id === auth()->user()->id
+                        )
+                        ->requiresConfirmation()
+                        ->action(fn(Peminjaman $record) => redirect()->route('peminjaman.surat', ['id' => $record->id])),
 
                     Action::make('upload_surat')
                         ->label('Upload Surat')
                         ->icon('heroicon-o-arrow-up-tray')
                         ->color('gray')
-                        ->visible(fn($record) => !auth()->user()?->can('uploadSurat', $record))
+                        ->visible(
+                            fn($record) =>
+                            $record->status_pinjam === 'menunggu'
+                        )
                         ->form([
                             FileUpload::make('file_surat')
                                 ->label('Unggah Surat Bertandatangan')
