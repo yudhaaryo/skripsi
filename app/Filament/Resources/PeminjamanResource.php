@@ -212,14 +212,14 @@ class PeminjamanResource extends Resource
             ->actions([
                 \Filament\Tables\Actions\ActionGroup::make([
                     Action::make('setujui')
-                        ->label('Setujui')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->visible(fn($record) => auth()->user()?->can('setujui', $record))
-                        ->requiresConfirmation()
-                        ->action(function (Peminjaman $record) {
-                            $record->update(['status_pinjam' => 'dipinjam']);
-                        }),
+                    ->label('Setujui')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn($record) => auth()->user()?->can('setujui', $record))
+                    ->requiresConfirmation()
+                    ->action(function (Peminjaman $record) {
+                        $record->update(['status_pinjam' => 'dipinjam']);
+                    }),
 
 
 
@@ -228,16 +228,12 @@ class PeminjamanResource extends Resource
 
 
                     Action::make('tolak')
-                        ->label('Tolak')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->visible(fn($record) => auth()->user()?->can('tolak', $record))
-                        ->requiresConfirmation()
-
-                        ->action(
-                            fn(Peminjaman $record) =>
-                            $record->update(['status_pinjam' => 'ditolak'])
-                        ),
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn($record) => auth()->user()?->can('tolak', $record))
+                    ->requiresConfirmation()
+                    ->action(fn($record) => $record->update(['status_pinjam' => 'ditolak'])),
 
 
 
