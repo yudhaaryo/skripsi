@@ -215,38 +215,24 @@ class PeminjamanResource extends Resource
                         ->label('Setujui')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
+                        ->visible(fn($record) => auth()->user()?->can('setujui', $record))
                         ->requiresConfirmation()
-                        ->authorize(false)
-                        ->visible(
-                            fn($record) =>
-                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
-                            $record->status_pinjam === 'menunggu'
-                        )
+                        ->action(function (Peminjaman $record) {
+                            $record->update(['status_pinjam' => 'dipinjam']);
+                        }),
 
 
 
 
 
-                        ->action(
-                            fn(Peminjaman $record) =>
-                            $record->update(['status_pinjam' => 'dipinjam'])
-                        ),
+
 
                     Action::make('tolak')
                         ->label('Tolak')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
+                        ->visible(fn($record) => auth()->user()?->can('tolak', $record))
                         ->requiresConfirmation()
-                        ->authorize(false)
-                        ->visible(
-                            fn($record) =>
-                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
-                            $record->status_pinjam === 'menunggu'
-                        )
-
-
-
-
 
                         ->action(
                             fn(Peminjaman $record) =>
