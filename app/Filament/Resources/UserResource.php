@@ -4,9 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
-use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteAction;
@@ -14,7 +12,6 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\ActionSize;
 
