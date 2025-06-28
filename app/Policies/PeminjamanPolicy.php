@@ -107,12 +107,12 @@ class PeminjamanPolicy
     }
     public function setujui(User $user, Peminjaman $peminjaman)
     {
-        return true;
+        return $user->hasAnyRole(['admin', 'guru']) && $peminjaman->status_pinjam === 'menunggu';
     }
-
     public function tolak(User $user, Peminjaman $peminjaman)
     {
-        return true;
+        return $user->hasAnyRole(['admin', 'guru']) && $peminjaman->status_pinjam === 'menunggu';
     }
+
 
 }
