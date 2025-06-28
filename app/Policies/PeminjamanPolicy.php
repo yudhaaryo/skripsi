@@ -106,13 +106,13 @@ class PeminjamanPolicy
         return $user->can('reorder_peminjaman');
     }
     public function setujui(User $user, Peminjaman $peminjaman)
-{
-    return $user->hasAnyRole(['admin', 'guru']) && $peminjaman->status_pinjam === 'menunggu';
-}
+    {
+        return true;
+    }
 
-public function tolak(User $user, Peminjaman $peminjaman)
-{
-    return $user->hasAnyRole(['admin', 'guru']) && $peminjaman->status_pinjam === 'menunggu';
-}
+    public function tolak(User $user, Peminjaman $peminjaman)
+    {
+        return true;
+    }
 
 }
