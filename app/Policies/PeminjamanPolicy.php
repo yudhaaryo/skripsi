@@ -114,5 +114,9 @@ class PeminjamanPolicy
         return $user->hasAnyRole(['super_admin', 'Guru']) && $peminjaman->status_pinjam === 'menunggu';
     }
 
+public function kembalikan(User $user, Peminjaman $peminjaman)
+{
+    return $user->hasAnyRole(['super_admin', 'Guru']) && $peminjaman->status_pinjam === 'dipinjam';
+}
 
 }

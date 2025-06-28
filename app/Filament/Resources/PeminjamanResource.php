@@ -217,7 +217,18 @@ class PeminjamanResource extends Resource
                         ->color('success')
                         ->authorize('setujui') // Panggil policy setujui
                         ->requiresConfirmation()
-                        ->action(fn(Peminjaman $record) => $record->update(['status_pinjam' => 'dipinjam'])),
+                        ->action(function (Peminjaman $record) {
+                            if (empty($record->file_surat)) {
+                                Notification::make()
+                                    ->title('Gagal!')
+                                    ->body('File surat bertandatangan harus diupload sebelum dapat disetujui.')
+                                    ->danger()
+                                    ->send();
+
+                                return;
+                            }
+                            $record->update(['status_pinjam' => 'dipinjam']);
+                        }),
 
 
 
@@ -271,11 +282,8 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-arrow-uturn-left')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->visible(
-                            fn($record) =>
-                            Auth::user()?->hasAnyRole(['admin', 'guru'], 'web') &&
-                            $record->status_pinjam === 'dipinjam'
-                        )
+                        ->authorize('kembalikan')
+                        ->visible(fn($record) => strtolower(trim($record->status_pinjam)) === 'dipinjam')
 
 
 
