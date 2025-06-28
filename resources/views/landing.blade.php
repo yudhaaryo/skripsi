@@ -7,26 +7,6 @@
     <title>SIMPA - Sistem Inventaris</title>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        @keyframes highlight {
-
-            0%,
-            100% {
-                background-color: green;
-                color: #262626;
-            }
-
-            50% {
-                background-color:rgb(45, 164, 47);
-                color: #fff;
-            }
-        }
-
-        .highlight-animate {
-            animation: highlight 1.5s infinite;
-            transition: color .3s, background .3s;
-        }
-    </style>
 </head>
 
 <body class="flex flex-col min-h-screen bg-gray-900 text-gray-100 font-sans">
@@ -37,7 +17,6 @@
     </header>
 
     <!-- HERO SECTION -->
-     
     <section id="hero"
         class="flex flex-col md:flex-row items-center justify-between px-8 py-8 md:py-12 lg:py-16 bg-gradient-to-l from-gray-800 to-gray-900 flex-1">
 
@@ -45,15 +24,9 @@
             <h2 class="text-4xl md:text-5xl font-bold text-gray-100 leading-tight">
                 Kelola Inventaris.<br>
                 Pinjam Mudah.<br>
-                <span
-  class="inline-block px-4 py-1 highlight-animate font-extrabold rounded leading-tight shadow"
-  style="box-decoration-break: clone;"
->
-  Efisien
-</span> untuk SMK 3 Yogyakarta.
+                <span class="font-extrabold text-green-400">Efisien</span> untuk SMK 3 Yogyakarta.
             </h2>
-            <p class="text-gray-300 text-lg mt-4">Sistem Informasi Inventaris & Peminjaman Alat Persediaan <b>SIMPA</b> –
-                digital, cepat, akurat.</p>
+            <p class="text-gray-300 text-lg mt-4">Sistem Informasi Inventaris & Peminjaman Alat Persediaan <b>SIMPA</b> – digital, cepat, akurat.</p>
             <a href="/admin"
                 class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition transform hover:scale-105 duration-300 shadow-lg mt-6">Masuk
             </a>
@@ -62,7 +35,6 @@
         <div class="md:w-1/2 mt-10 md:mt-0 flex justify-center" data-aos="fade-left" data-aos-duration="1000">
             <img src="{{ asset('img/hero.png') }}" alt="Inventaris"
                 class="w-full max-w-md mx-auto drop-shadow-2xl transform hover:scale-105 transition duration-500">
-            
         </div>
     </section>
 
@@ -76,5 +48,4 @@
         AOS.init();
     </script>
 </body>
-
 </html>

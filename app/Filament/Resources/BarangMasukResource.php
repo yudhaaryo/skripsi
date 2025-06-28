@@ -27,42 +27,38 @@ class BarangMasukResource extends Resource
     protected static ?int $navigationSort = 0;
 
 
-    public static function form(Form $form): Form
-    {
-        return $form->schema([
-            Select::make('barang_id')
-                ->label('Pilih Barang / Tambah Barang Baru')
-                ->relationship('barang', 'nama_barang_aplikasi')
-                ->createOptionForm([
-                    TextInput::make('kode_barang')->label('Kode')->required(),
-                    TextInput::make('nama_barang_asli')->label('Nama Asli')->required(),
-                    TextInput::make('nama_barang_aplikasi')->label('Nama di Aplikasi')->required(),
-                    TextInput::make('harga_beli')->label('Harga Beli')->numeric(),
-                    TextInput::make('jumlah_awal')->label('Jumlah Awal')->numeric()->required(),
-                    TextInput::make('satuan')->required(),
-                    DatePicker::make('tanggal_masuk')
-                        ->label('Tanggal Masuk')
-                        ->required()
-                        ->default(now()),
-                    
-                ])
+   public static function form(Form $form): Form
+{
+    return $form->schema([
+        Select::make('barang_id')
+    ->label('Pilih Barang')
+    ->relationship('barang', 'nama_barang_aplikasi')
+    ->searchable()
+    ->required(),
 
-                ->searchable()
-                ->required(),
+DatePicker::make('tanggal_masuk')
+    ->label('Tanggal Masuk')
+    ->required()
+    ->default(now())
+    ->dehydrateStateUsing(function ($state) {
+        if (is_array($state)) {
+            return $state[0] ?? now()->toDateString();
+        }
+        if (is_string($state) && str_contains($state, ',')) {
+            return trim(explode(',', $state)[0]);
+        }
+        return $state;
+    }),
 
 
-            TextInput::make('jumlah_masuk')
-                ->label('Jumlah Masuk (Jika barang baru kosongkan)')
-                ->numeric()
-                ->nullable()
-                ->required(),
+TextInput::make('jumlah_masuk')
+    ->label('Jumlah Masuk')
+    ->numeric()
+    ->required(),
 
-            DatePicker::make('tanggal_masuk')
-                ->label('Tanggal Masuk')
-                ->required()
-                ->default(now()),
-        ]);
-    }
+    ]);
+}
+
 
     public static function table(Table $table): Table
     {
@@ -70,7 +66,7 @@ class BarangMasukResource extends Resource
             ->columns([
                 TextColumn::make('barang.nama_barang_aplikasi')->label('Nama Barang')->searchable(),
                 TextColumn::make('jumlah_masuk')->label('Jumlah Masuk'),
-                TextColumn::make('tanggal_masuk')->label('Tanggal Masuk')->date() ->searchable() ,
+                TextColumn::make('tanggal_masuk')->label('Tanggal Masuk')->date()->searchable(),
                 TextColumn::make('created_at')->label('Dibuat')->since(),
             ])
             ->filters([
@@ -89,11 +85,11 @@ class BarangMasukResource extends Resource
             ->actions([
                 ActionGroup::make([
                     EditAction::make(),
-                DeleteAction::make()
+                    DeleteAction::make()
 
                 ])
-                
-                ->label('Aksi')
+
+                    ->label('Aksi')
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->size(ActionSize::Small)
                     ->color('primary')
@@ -118,6 +114,7 @@ class BarangMasukResource extends Resource
             'index' => Pages\ListBarangMasuks::route('/'),
             'create' => Pages\CreateBarangMasuk::route('/create'),
             'edit' => Pages\EditBarangMasuk::route('/{record}/edit'),
+            'create-barang-baru' => Pages\CreateBarangBaruMasuk::route('/create-barang-baru'),
         ];
     }
 }
