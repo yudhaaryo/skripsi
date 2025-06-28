@@ -216,11 +216,13 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->visible(
-                            fn($record) =>
-                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
-                            $record->status_pinjam === 'menunggu'
-                        )
+                        ->visible(function ($record) {
+                            dd(Auth::guard('web')->user(), Auth::guard('web')->user()?->getRoleNames());
+                            // kode dibawah ini tidak dijalankan karena dd() akan menghentikan eksekusi
+                            return Auth::guard('web')->user()?->hasAnyRole(['admin', 'guru']) &&
+                                $record->status_pinjam === 'menunggu';
+                        })
+
 
 
                         ->action(
@@ -233,11 +235,13 @@ class PeminjamanResource extends Resource
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->visible(
-                            fn($record) =>
-                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
-                            $record->status_pinjam === 'menunggu'
-                        )
+                        ->visible(function ($record) {
+                            dd(Auth::guard('web')->user(), Auth::guard('web')->user()?->getRoleNames());
+                            // kode dibawah ini tidak dijalankan karena dd() akan menghentikan eksekusi
+                            return Auth::guard('web')->user()?->hasAnyRole(['admin', 'guru']) &&
+                                $record->status_pinjam === 'menunggu';
+                        })
+
 
 
                         ->action(
