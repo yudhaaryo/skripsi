@@ -218,9 +218,10 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->visible(
                             fn($record) =>
-                            Auth::guard('web')->user()?->hasAnyRole(['admin', 'guru'])
-                            && $record->status_pinjam === 'menunggu'
+                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            $record->status_pinjam === 'menunggu'
                         )
+
 
                         ->action(
                             fn(Peminjaman $record) =>
@@ -234,9 +235,10 @@ class PeminjamanResource extends Resource
                         ->requiresConfirmation()
                         ->visible(
                             fn($record) =>
-                            Auth::guard('web')->user()?->hasAnyRole(['admin', 'guru'])
-                            && $record->status_pinjam === 'menunggu'
+                            auth()->user()?->hasAnyRole(['admin', 'guru']) &&
+                            $record->status_pinjam === 'menunggu'
                         )
+
 
                         ->action(
                             fn(Peminjaman $record) =>
