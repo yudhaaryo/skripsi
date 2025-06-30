@@ -54,8 +54,8 @@ DatePicker::make('tanggal_masuk')
 TextInput::make('jumlah_masuk')
     ->label('Jumlah Masuk')
     ->numeric()
-    ->required(),
-
+    ->required()
+     ->rules(['min:1'])
     ]);
 }
 

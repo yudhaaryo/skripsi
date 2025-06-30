@@ -15,7 +15,8 @@ class ListBarangMasuks extends ListRecords
     return [
         Actions\CreateAction::make()
             ->label('Tambah Barang Masuk')
-            ->url(route('filament.admin.resources.barang-masuks.create')),
+            ->url(route('filament.admin.resources.barang-masuks.create'))
+            ->icon('heroicon-o-plus'),
 
         Actions\Action::make('Tambah Barang Baru')
             ->label('Tambah Barang Baru')

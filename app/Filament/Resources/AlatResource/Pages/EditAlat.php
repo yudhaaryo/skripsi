@@ -10,12 +10,10 @@ class EditAlat extends EditRecord
 {
     protected static string $resource = AlatResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+    // protected function getHeaderActions(): array
+    // {
+    //     return false;
+    // }
      protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
