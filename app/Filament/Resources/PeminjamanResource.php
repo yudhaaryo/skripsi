@@ -84,11 +84,6 @@ class PeminjamanResource extends Resource
 
 
 
-            FileUpload::make('file_surat')
-                ->label('Unggah Surat')
-                ->directory('surat-peminjaman')
-                ->acceptedFileTypes(['application/pdf', 'image/*'])
-                ->visible(fn() => Auth::user()?->hasRole('siswa', 'web')),
             Repeater::make('alats')
                 ->label('Pilih Unit Alat')
                 ->columnSpan(2)
