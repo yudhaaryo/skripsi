@@ -138,16 +138,6 @@ class PeminjamanResource extends Resource
                 TextColumn::make('user.name')
                     ->label('Nama Peminjam')
                     ->searchable(),
-                TextColumn::make('kelas_peminjam')
-                    ->searchable(),
-                TextColumn::make('nis_peminjam')
-                    ->searchable(),
-                TextColumn::make('keperluan')
-                    ->label('Keperluan')
-                    ->wrap()
-                    ->searchable(),
-                TextColumn::make('tanggal_pinjam'),
-                TextColumn::make('tanggal_kembali'),
 
                 TextColumn::make('alat_dipinjam')
                     ->label('Alat Dipinjam')
@@ -174,6 +164,17 @@ class PeminjamanResource extends Resource
                     ->label('Surat')
                     ->formatStateUsing(fn($state) => $state ? '📄 Lihat Surat' : '-')
                     ->url(fn($record) => $record->file_surat ? \Storage::url($record->file_surat) : null),
+                TextColumn::make('kelas_peminjam')
+                    ->searchable(),
+                TextColumn::make('nis_peminjam')
+                    ->searchable(),
+                TextColumn::make('keperluan')
+                    ->label('Keperluan')
+                    ->wrap()
+                    ->searchable(),
+                TextColumn::make('tanggal_pinjam'),
+                TextColumn::make('tanggal_kembali'),
+
             ])
             ->filters([
                 Filter::make('terlambat')
