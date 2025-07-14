@@ -143,20 +143,22 @@ class AlatResource extends Resource
                 Action::make('create')
                     ->label('Tambah Jenis Alat Baru')
                     ->url(route('filament.admin.resources.alats.create'))
-                    ->visible(fn () => auth()->user()?->hasRole('siswa')),
+                    ->hidden(fn () => auth()->user()?->hasRole('siswa')),
 
                 Action::make('tambah_unit')
                     ->label('Tambah Unit Alat')
                     ->url(route('filament.admin.resources.alats.tambah-unit'))
-                    ->visible(fn () => auth()->user()?->hasRole('siswa')),
+                    ->hidden(fn () => auth()->user()?->hasRole('siswa')),
 
                 Action::make('importAlat')
                 ->label('Import Alat')
                 ->form([
                     FileUpload::make('file')
                         ->label('File Import (xlsx/csv)')
-                        ->disk('public') // pastikan sama dengan Storage::disk('public')
+                        ->disk('public')
                         ->required()
+                    ->hidden(fn () => auth()->user()?->hasRole('siswa'))
+
                         ->acceptedFileTypes([
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'text/csv'
