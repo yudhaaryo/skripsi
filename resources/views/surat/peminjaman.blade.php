@@ -130,7 +130,7 @@
                 NIP. 197007201998011003
             </td>
             <td>
-                 Guru Pengampu<br><br><br> <br>
+                 KABENG/Guru Pengampu<br><br><br> <br>
                 .........................................
             </td>
             <td>

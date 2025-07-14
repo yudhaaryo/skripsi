@@ -69,7 +69,7 @@
             KPK, TJ, dan BP
         </td>
         <td colspan="6" style="text-align: right;">
-            Kepala Laboratorium TJ
+            Kepala Bengkel TJ
         </td>
     </tr>
     <!-- Tambah baris kosong untuk ruang ttd -->

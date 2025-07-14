@@ -27,37 +27,37 @@ class BarangMasukResource extends Resource
     protected static ?int $navigationSort = 0;
 
 
-   public static function form(Form $form): Form
-{
-    return $form->schema([
-        Select::make('barang_id')
-    ->label('Pilih Barang')
-    ->relationship('barang', 'nama_barang_aplikasi')
-    ->searchable()
-    ->required(),
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            Select::make('barang_id')
+                ->label('Pilih Barang')
+                ->relationship('barang', 'nama_barang_aplikasi')
+                ->searchable()
+                ->required(),
 
-DatePicker::make('tanggal_masuk')
-    ->label('Tanggal Masuk')
-    ->required()
-    ->default(now())
-    ->dehydrateStateUsing(function ($state) {
-        if (is_array($state)) {
-            return $state[0] ?? now()->toDateString();
-        }
-        if (is_string($state) && str_contains($state, ',')) {
-            return trim(explode(',', $state)[0]);
-        }
-        return $state;
-    }),
+            DatePicker::make('tanggal_masuk')
+                ->label('Tanggal Masuk')
+                ->required()
+                ->default(now())
+                ->dehydrateStateUsing(function ($state) {
+                    if (is_array($state)) {
+                        return $state[0] ?? now()->toDateString();
+                    }
+                    if (is_string($state) && str_contains($state, ',')) {
+                        return trim(explode(',', $state)[0]);
+                    }
+                    return $state;
+                }),
 
 
-TextInput::make('jumlah_masuk')
-    ->label('Jumlah Masuk')
-    ->numeric()
-    ->required()
-     ->rules(['min:1'])
-    ]);
-}
+            TextInput::make('jumlah_masuk')
+                ->label('Jumlah Masuk')
+                ->numeric()
+                ->required()
+                ->rules(['min:1'])
+        ]);
+    }
 
 
     public static function table(Table $table): Table
@@ -90,7 +90,7 @@ TextInput::make('jumlah_masuk')
                 ])
 
                     ->label('Aksi')
-                    ->icon('heroicon-m-ellipsis-vertical')
+
                     ->size(ActionSize::Small)
                     ->color('primary')
                     ->button(),

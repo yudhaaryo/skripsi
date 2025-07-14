@@ -17,13 +17,18 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\Action;
+
 use Filament\Tables\Actions\DeleteBulkAction;
 use Carbon\Carbon;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\FileUpload;
+
+use Filament\Notifications\Notification;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class BarangResource extends Resource
@@ -79,24 +84,24 @@ class BarangResource extends Resource
 
             ])
             ->filters([
-                 Filter::make('stok_habis')
-                ->label('Stok Habis (0)')
-                ->query(function ($query) {
-                    $query->whereRaw('
-                        (jumlah_awal + 
-                            (SELECT IFNULL(SUM(jumlah_masuk),0) FROM barang_masuks WHERE barang_masuks.barang_id = barangs.id) - 
+                Filter::make('stok_habis')
+                    ->label('Stok Habis (0)')
+                    ->query(function ($query) {
+                        $query->whereRaw('
+                        (jumlah_awal +
+                            (SELECT IFNULL(SUM(jumlah_masuk),0) FROM barang_masuks WHERE barang_masuks.barang_id = barangs.id) -
                             (SELECT IFNULL(SUM(jumlah_keluar),0) FROM barang_keluars WHERE barang_keluars.barang_id = barangs.id)
                         ) = 0
                     ');
-                }),
-        ])
+                    }),
+            ])
             ->actions([
                 ActionGroup::make([
                     EditAction::make()
 
                 ])
-                
-                ->label('Aksi')
+
+                    ->label('Aksi')
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->size(ActionSize::Small)
                     ->color('primary')
@@ -107,58 +112,89 @@ class BarangResource extends Resource
                 DeleteBulkAction::make(),
             ])
             ->headerActions([
+                Action::make('importBarang')
+                    ->label('Import Barang')
+                    ->form([
+                        FileUpload::make('file')
+                            ->label('File Import (xlsx/csv)')
+                            ->required()
+                            ->acceptedFileTypes([
+                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                'text/csv'
+                            ]),
+                    ])
+                    ->action(function (array $data) {
+                        $relativePath = $data['file'];
+                        $absolutePath = \Storage::disk('public')->path($relativePath);
+
+                        if (!file_exists($absolutePath)) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Gagal import!')
+                                ->body('File tidak ditemukan di storage: ' . $absolutePath)
+                                ->send();
+                            return;
+                        }
+
+                        Excel::import(new \App\Imports\BarangImport, $absolutePath);
+
+                        Notification::make()
+                            ->title('Import sukses!')
+                            ->success()
+                            ->send();
+                    }),
                 ExportAction::make('export_excel')
-            ->label('Export Excel')
-            ->icon('heroicon-o-arrow-down-tray')
-            ->form([
-        DatePicker::make('bulan')
-            ->label('Pilih Bulan')
-            ->displayFormat('F Y')
-            ->native(false)
-            ->closeOnDateSelection(true)
-            ->extraAttributes([
-                'data-enable-time' => 'false',
-                'data-no-calendar' => 'false',
-                'data-date-format' => 'Y-m',
-                'data-alt-input' => 'true',
-                'data-alt-format' => 'F Y',
-                'data-default-date' => now()->format('Y-m'),
-                'data-plugins' => '[\"monthSelectPlugin\"]',
-            ])
-            ->reactive()
-            ->required(),
+                    ->label('Export Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->form([
+                        DatePicker::make('bulan')
+                            ->label('Pilih Bulan')
+                            ->displayFormat('F Y')
+                            ->native(false)
+                            ->closeOnDateSelection(true)
+                            ->extraAttributes([
+                                'data-enable-time' => 'false',
+                                'data-no-calendar' => 'false',
+                                'data-date-format' => 'Y-m',
+                                'data-alt-input' => 'true',
+                                'data-alt-format' => 'F Y',
+                                'data-default-date' => now()->format('Y-m'),
+                                'data-plugins' => '[\"monthSelectPlugin\"]',
+                            ])
+                            ->reactive()
+                            ->required(),
 
 
 
-        \Filament\Forms\Components\Select::make('filter_penggunaan')
-            ->label('Tampilkan Barang')
-            ->options([
-                'semua' => 'Tampilkan Semua Barang',
-                'digunakan' => 'Hanya Barang yang Digunakan Bulan Ini',
-                'mutasi' =>'Hanya Barang yang Ada Mutasi Bulan Ini',
-                'habis' => 'Hanya Barang yang stok habis',
+                        \Filament\Forms\Components\Select::make('filter_penggunaan')
+                            ->label('Tampilkan Barang')
+                            ->options([
+                                'semua' => 'Tampilkan Semua Barang',
+                                'digunakan' => 'Hanya Barang yang Digunakan Bulan Ini',
+                                'mutasi' => 'Hanya Barang yang Ada Mutasi Bulan Ini',
+                                'habis' => 'Hanya Barang yang stok habis',
 
-            ])
-            ->default('semua')
-            ->required(),
-    ])
-    ->action(function (array $data) {
-        $queryString = http_build_query([
-            'bulan' => Carbon::parse($data['bulan'])->format('Y-m'),
+                            ])
+                            ->default('semua')
+                            ->required(),
+                    ])
+                    ->action(function (array $data) {
+                        $queryString = http_build_query([
+                            'bulan' => Carbon::parse($data['bulan'])->format('Y-m'),
 
-            'filter_penggunaan' => $data['filter_penggunaan'],
-        ]);
+                            'filter_penggunaan' => $data['filter_penggunaan'],
+                        ]);
 
-        return redirect()->away(route('export-barang') . '?' . $queryString);
-    }),
+                        return redirect()->away(route('export-barang') . '?' . $queryString);
+                    }),
             ]);
     }
 
     public static function getEloquentQuery(): Builder
-{
-    $barangTerhapusIds = \App\Models\PenghapusanInventaris::where('jenis_inventaris', 'barang')->pluck('inventaris_id');
-    return parent::getEloquentQuery()->whereNotIn('id', $barangTerhapusIds);
-}
+    {
+        $barangTerhapusIds = \App\Models\PenghapusanInventaris::where('jenis_inventaris', 'barang')->pluck('inventaris_id');
+        return parent::getEloquentQuery()->whereNotIn('id', $barangTerhapusIds);
+    }
     public static function getPages(): array
     {
         return [

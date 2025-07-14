@@ -17,11 +17,14 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
+use Maatwebsite\Excel\Facades\Excel;
 
 use Filament\Tables\Enums\ActionsPosition;
 
 
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\FileUpload;
+use App\Imports\AlatImport;
 
 class AlatResource extends Resource
 {
@@ -73,7 +76,7 @@ class AlatResource extends Resource
                         'Rusak Berat' => 'Rusak Berat',
                         'Hilang' => 'Hilang',
                     ])->required(),
-                    
+
                     TextInput::make('keterangan')->label('Keterangan')->nullable(),
                 ])
                 ->minItems(1)
@@ -119,7 +122,7 @@ class AlatResource extends Resource
             ->actions([
                 \Filament\Tables\Actions\ActionGroup::make([
                     EditAction::make(),
-                    
+
                 ])
                     ->label('Aksi')
                     ->icon('heroicon-m-ellipsis-vertical')
@@ -127,7 +130,7 @@ class AlatResource extends Resource
                     ->color('primary')
                     ->button(),
             ])
-            ->actionsPosition(ActionsPosition::BeforeCells) 
+            ->actionsPosition(ActionsPosition::BeforeCells)
 
 
 
@@ -140,13 +143,48 @@ class AlatResource extends Resource
                 Action::make('create')
                     ->label('Tambah Jenis Alat Baru')
                     ->url(route('filament.admin.resources.alats.create'))
-                     ->visible(fn () => !auth()->user()?->hasRole('siswa')),
+                    ->visible(fn () => auth()->user()?->hasRole('siswa')),
+
                 Action::make('tambah_unit')
                     ->label('Tambah Unit Alat')
                     ->url(route('filament.admin.resources.alats.tambah-unit'))
-                     ->visible(fn () => !auth()->user()?->hasRole('siswa')),
-            ]);
-    }
+                    ->visible(fn () => auth()->user()?->hasRole('siswa')),
+
+                Action::make('importAlat')
+                ->label('Import Alat')
+                ->form([
+                    FileUpload::make('file')
+                        ->label('File Import (xlsx/csv)')
+                        ->disk('public') // pastikan sama dengan Storage::disk('public')
+                        ->required()
+                        ->acceptedFileTypes([
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            'text/csv'
+                        ]),
+                ])
+                ->action(function (array $data) {
+                    $relativePath = $data['file'];
+                    $absolutePath = \Storage::disk('public')->path($relativePath);
+
+                    if (!file_exists($absolutePath)) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Gagal import!')
+                            ->body('File tidak ditemukan di storage: ' . $absolutePath)
+                            ->send();
+                        return;
+                    }
+
+                    \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\AlatImport, $absolutePath);
+
+                    Notification::make()
+                        ->title('Import sukses!')
+                        ->success()
+                        ->send();
+                }),
+                ]);
+            }
+
 
     public static function getRelations(): array
     {

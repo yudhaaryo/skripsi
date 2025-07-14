@@ -16,7 +16,7 @@ class CreateBarangBaruMasuk extends Page implements Forms\Contracts\HasForms
 
     protected static string $resource = BarangMasukResource::class;
 
-    // Nama view blade kamu, pastikan file blade-nya ada di lokasi ini
+
     protected static string $view = 'filament.resources.barang-masuk-resource.pages.create-barang-baru-masuk';
 
     public $kode_barang;
@@ -34,7 +34,7 @@ class CreateBarangBaruMasuk extends Page implements Forms\Contracts\HasForms
 
     public function mount(): void
     {
-        // Set default tanggal masuk saat form tampil
+
         $this->form->fill([
             'tanggal_masuk' => now(),
         ]);
@@ -66,7 +66,7 @@ class CreateBarangBaruMasuk extends Page implements Forms\Contracts\HasForms
             $tanggalMasuk = trim(explode(',', $tanggalMasuk)[0]);
         }
 
-        // Simpan data barang baru tanpa stok awal di tabel barang_masuk
+
         $barang = Barang::create([
             'kode_barang' => $data['kode_barang'],
             'nama_barang_asli' => $data['nama_barang_asli'],
