@@ -36,6 +36,7 @@ class TambahUnitAlat extends Page
 
             Repeater::make('units')
                 ->label('Tambah Unit/Detail')
+                ->minItems(1)
                 ->schema([
                     Select::make('no_unit')
                         ->label('No. Unit')
